@@ -1,0 +1,188 @@
+:root {
+    --font: monospace;
+    --darkgray: #303030;
+}
+
+body {
+    background-color: darkslategrey;
+}
+
+div#samplerContainer {
+    position: relative;
+    background-color: var(--darkgray);
+    margin: 5% 0 0 0;
+    width: 65%;
+    left: 12.5%;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+div.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2% 0 2% 0;
+    background-color: #484848;
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+input#sampleName, input#trackTitle {
+    height: 35px;
+    margin: 2px;
+    font-family: var(--font);
+    font-size: 1.2em;
+}
+
+label {
+    font-family: var(--font);
+    font-size: 1.2em;
+}
+
+input#trackBPM {
+    height: 35px;
+    width: 50px;
+    margin: 2px;
+    text-align: center;
+    font-family: var(--font);
+    font-size: 1.2em;
+}
+
+.controlButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 50px;
+    background-color: lightgray;
+    margin: 2px;
+    border-bottom: 4px solid gray;
+}
+
+.controlButton:hover, button#addSampleButton:hover, .deleteSample:hover {
+    cursor: pointer;
+    background-color: gray;
+}
+
+button#addSampleButton {
+    height: 40px;
+    width: 80px;
+    background-color: lightgray;
+    margin: 2px;
+    font-weight: bold;
+    color: black;
+    font-family: var(--font);
+    font-size: 1.2em;
+    border-bottom: 4px solid gray;
+}
+
+div#waveform {
+    margin: 0 2% 0 2%;
+}
+
+div#playerContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--darkgray);
+    margin: 5% 0 5% 0;
+    width: 75%;
+    left: 7.5%;
+    position: relative;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+div#rollContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 40%;
+    box-sizing: border-box;
+    margin: 5% 0 5% 0;
+}
+
+div.seq-column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    opacity: 1;
+    background-color: gray;
+    padding: 2px 0 2px 0;
+}
+
+div.seq-column p {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    margin: 2px;
+    height: 25px;
+    width: 300px;
+    text-align: center;
+    font-family: var(--font);
+    font-size: 1.2em;
+}
+
+button.seq-note {
+    height: 25px;
+    width: 25px;
+    background-color: white;
+    border: none;
+    margin: 2px;
+}
+
+button.seq-note:hover {
+    cursor: pointer;
+}
+
+button.deleteSample {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 25px;
+    width: 25px;
+    background-color: lightgray;
+    border: none;
+    margin: 2px;
+}
+
+input {
+    border: 1px solid black;
+}
+
+@media (max-width: 950px) {
+    div#samplerContainer, div#playerContainer {
+        width: 95%;
+        left: 2.5%;
+    }
+
+    input#sampleName, input#trackTitle {
+        height: 35px;
+        margin: 5px;
+        width: 25%;
+    }
+
+    .sampleControl {
+        width: 10%;
+    }
+
+    div#rollContainer {
+        width: 100%;
+    }
+
+    div.seq-column {
+        width: 5%;
+    }
+
+    button.seq-note {
+        width: 100%;
+        border: 1px solid gray;
+    }
+}
+

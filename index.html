@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Sequence</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/script.js" type="module"></script>
+    </head>
+    <body>
+        <div id="samplerContainer">
+            <div class="controls">
+                <input id="sampleName" placeholder="Sample Name">
+                <button id="uploadSampleButton" class="controlButton">
+                    <img src="resources/images/icons8-upload-48.png" width="30px" height="30px">
+                </button>
+                <button id="recordSampleButton" class="controlButton">
+                    <img src="resources/images/icons8-record-48.png">
+                </button>
+                <button id="stopSampleButton" class="controlButton" disabled>
+                    <img src="resources/images/icons8-stop-30.png">
+                </button>
+                <button id="playSampleButton" class="controlButton" disabled>
+                    <img src="resources/images/icons8-play-button-30.png">
+                </button>
+                <button id="downloadSampleButton" class="controlButton" disabled>
+                    <img src="resources/images/icons8-downloading-updates-48.png" width="30px" height="30px">
+                </button>
+                <button id="addSampleButton" disabled>Save Sample</button>
+            </div>
+            <div id="waveform"></div>
+        </div>
+        <div id="playerContainer">
+            <div class="controls">
+                <input id="trackTitle" placeholder="Track Title">
+                <label for="trackBPM">BPM</label>
+                <input id="trackBPM" name="trackBPM" value="120">
+                <button id="playTrackButton" class="controlButton" disabled>
+                    <img src="resources/images/icons8-play-button-30.png">
+                </button>
+                <button id="stopTrackButton" class="controlButton" disabled>
+                    <img src="resources/images/icons8-stop-30.png">
+                </button>
+                <button id="downloadTrackButton" class="controlButton" disabled>
+                    <img src="resources/images/icons8-downloading-updates-48.png" width="30px" height="30px">
+                </button>
+            </div>
+            <div id="rollContainer">
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+                <div class="seq-column"></div>
+            </div>
+        </div>
+    </body>
+</html>
