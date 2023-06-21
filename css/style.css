@@ -12,7 +12,7 @@ div#samplerContainer {
     background-color: var(--darkgray);
     margin: 5% 0 0 0;
     width: 65%;
-    left: 12.5%;
+    left: 17.5%;
     border: 1px solid black;
     border-radius: 10px;
 }
@@ -56,20 +56,23 @@ input#trackBPM {
     height: 40px;
     width: 50px;
     background-color: lightgray;
-    margin: 2px;
+    margin: 1px;
     border-bottom: 4px solid gray;
 }
 
-.controlButton:hover, button#addSampleButton:hover, .deleteSample:hover {
+.controlButton:hover, button#addSampleButton:hover, .deleteSample:hover, .muteSample:hover {
     cursor: pointer;
     background-color: gray;
 }
 
 button#addSampleButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 40px;
     width: 80px;
     background-color: lightgray;
-    margin: 2px;
+    margin: 1px;
     font-weight: bold;
     color: black;
     font-family: var(--font);
@@ -89,7 +92,7 @@ div#playerContainer {
     background-color: var(--darkgray);
     margin: 5% 0 5% 0;
     width: 75%;
-    left: 7.5%;
+    left: 12.5%;
     position: relative;
     border: 1px solid black;
     border-radius: 10px;
@@ -115,7 +118,7 @@ div.seq-column {
     padding: 2px 0 2px 0;
 }
 
-div.seq-column p {
+div.seq-column span {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -141,7 +144,7 @@ button.seq-note:hover {
     cursor: pointer;
 }
 
-button.deleteSample {
+button.deleteSample, button.muteSample {
     display: flex;
     align-items: center;
     justify-content: center;

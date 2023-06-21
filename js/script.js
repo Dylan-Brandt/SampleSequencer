@@ -156,7 +156,6 @@ function stopRecording() {
 
 // Function to handle play button click
 function playRecording() {
-    console.log('play');
     wavesurfer.play();
 }
 
@@ -237,21 +236,35 @@ function addSampleToRoll() {
     seqColumns.forEach((currentValue, index) => {
         if(index == 0) {
             // Sample title
-            let label = document.createElement('p');
+            let label = document.createElement('span');
             label.innerHTML = document.getElementById('sampleName').value ? document.getElementById('sampleName').value : (samples.length + 1).toString();
             currentValue.appendChild(label);
+        }
+        else if(index == seqColumns.length - 2) {
+            // Mute sample button
+            let muteButton = document.createElement('button');
+            let icon = document.createElement('img');
+            muteButton.classList.add('muteSample');
+            muteButton.addEventListener('click', () => {
+                muteSample(muteButton);
+            });
+            icon.src = '../resources/images/icons8-mute-48.png';
+            icon.style.height = '25px';
+            icon.style.width = '25px';
+            muteButton.appendChild(icon);
+            currentValue.appendChild(muteButton);
         }
         else if(index == seqColumns.length - 1) {
             // Delete sample button
             let deleteButton = document.createElement('button');
             let icon = document.createElement('img');
             deleteButton.classList.add('deleteSample');
-            icon.src = '../resources/images/icons8-delete-30.png';
-            icon.style.height = '25px';
-            icon.style.width = '25px';
             deleteButton.addEventListener('click', () => {
                 deleteSample(deleteButton);
             });
+            icon.src = '../resources/images/icons8-delete-30.png';
+            icon.style.height = '25px';
+            icon.style.width = '25px';
             deleteButton.appendChild(icon);
             currentValue.appendChild(deleteButton);
         }
@@ -283,27 +296,24 @@ function playTrack() {
     let currentBeat;
 
     scheduleIds.push(Tone.Transport.scheduleRepeat((time) => {
-
         if(curNote > 15) {
             curNote = 0;
         }
-
         for(let i = 0; i < numSamples; i++) {
             noteIndex = curNote * numSamples + i;
             currentSample = noteIndex % numSamples;
             currentBeat = Math.floor(noteIndex/numSamples);
             // // Play sample if it is activated
-            if(seqNotes[noteIndex].getAttribute('active') != null) {
+            if(seqNotes[noteIndex].getAttribute('active') != null && seqNotes[noteIndex].getAttribute('muted') == null) {
                 samples[currentSample].start(time);
             }
             // Visualize sequence state
             seqColumns[currentBeat].style['background-color'] = 'gray';
             seqColumns[currentBeat + 1].style['background-color'] = 'darkgoldenrod';
             if(currentBeat == 0) {
-                seqColumns[seqColumns.length - 2].style['background-color'] = 'gray';
+                seqColumns[seqColumns.length - 3].style['background-color'] = 'gray';
             }
         }
-
         curNote++;
     }, '4n'));
     Tone.start();
@@ -351,12 +361,36 @@ function deleteSample(button) {
     samples.splice(row, 1);
     sampleBuffers.splice(row, 1);
     if(samples.length === 0) {
+        stopTrack();
         playTrackButton.disabled = true;
         downloadTrackButton.disabled = true;
     }
     seqColumns = document.querySelectorAll('div.seq-column');
     seqNotes = document.querySelectorAll('.seq-note');
     numSamples = seqNotes.length / 16;
+}
+
+// Mute a sample
+function muteSample(muteButton) {
+    const buttons = seqColumns[seqColumns.length - 2].children;
+    let row;
+    let rowButton;
+    for(let i = 0; i < buttons.length; i++) {
+        if(buttons[i] === muteButton) {
+            row = i;
+        }
+    };
+    seqColumns.forEach((element) => {
+        rowButton = element.childNodes[row];
+        if(rowButton.getAttribute('muted') === null) {
+            rowButton.setAttribute('muted', '');
+            muteButton.style.backgroundColor = '#484848';
+        }
+        else {
+            rowButton.removeAttribute('muted', '');
+            muteButton.style.backgroundColor = '';
+        };
+    });
 }
 
 // Download the sequencer track

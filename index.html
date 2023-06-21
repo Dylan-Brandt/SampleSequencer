@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Sequence</title>
+        <title>SampleSequencer</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="css/style.css">
         <script src="js/script.js" type="module"></script>
@@ -26,7 +26,9 @@
                 <button id="downloadSampleButton" class="controlButton" disabled>
                     <img src="resources/images/icons8-downloading-updates-48.png" width="30px" height="30px">
                 </button>
-                <button id="addSampleButton" disabled>Save Sample</button>
+                <button id="addSampleButton" disabled>
+                    <span>Save Sample</span>
+                </button>
             </div>
             <div id="waveform"></div>
         </div>
@@ -46,6 +48,7 @@
                 </button>
             </div>
             <div id="rollContainer">
+                <div class="seq-column"></div>
                 <div class="seq-column"></div>
                 <div class="seq-column"></div>
                 <div class="seq-column"></div>
