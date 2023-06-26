@@ -15,8 +15,10 @@ window.onload = () => {
     const stopTrackButton = document.getElementById('stopTrackButton');
     const downloadTrackButton = document.getElementById('downloadTrackButton');
     const trackBPM = document.getElementById('trackBPM');
+    const sampleGain = document.getElementById('sampleGain');
+    const sampleDistortion = document.getElementById('sampleDistortion');
 
-    // Add event listeners to the buttons
+    // Add event listeners
     uploadSampleButton.addEventListener('click', uploadSample);
     recordSampleButton.addEventListener('click', startRecording);
     stopSampleButton.addEventListener('click', stopRecording);
@@ -27,28 +29,59 @@ window.onload = () => {
     stopTrackButton.addEventListener('click', stopTrack);
     trackBPM.addEventListener('change', updateBPM);
     downloadTrackButton.addEventListener('click', downloadTrack);
+    sampleGain.addEventListener('change', updateEffects);
+    sampleDistortion.addEventListener('change', updateEffects);
 }
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let region;
 let mediaRecorder;
 
-const wavesurfer = WaveSurfer.create({
-    container: '#waveform',
-    scrollParent: true,
-    normalize: true,
-    waveColor: 'white',
-    sampleRate: audioCtx.sampleRate
-});
-const wsRegions = wavesurfer.registerPlugin(RegionsPlugin.create());
+let samplerPlayer = new Tone.Player();
+let samplerBuffer = new Tone.ToneAudioBuffer();
+let gain = new Tone.Gain(0);
+let distortion = new Tone.Distortion(0);
 
-wsRegions.on('region-clicked', (region, e) => {
-    e.stopPropagation();
-    region.play();
-    wavesurfer.on('audioprocess', autoStopRegionPlay);
-});
+let wavesurfer;
+let wsRegions;
+
+// Set up wavesurfer instance
+function configureWavesurfer() {
+    wavesurfer = WaveSurfer.create({
+        container: '#waveform',
+        scrollParent: true,
+        waveColor: 'white',
+        sampleRate: audioCtx.sampleRate
+    });
+
+    wavesurfer.on('ready', () => {
+        wsRegions.clearRegions();
+        region = wsRegions.addRegion({
+            start: 0,
+            end: wavesurfer.getDuration(),
+            color: "rgba(184, 134, 11, 0.25)"
+        });
+    })
+    wsRegions = wavesurfer.registerPlugin(RegionsPlugin.create());
+    
+    wsRegions.on('region-clicked', (region, e) => {
+        e.stopPropagation();
+        region.play();
+        wavesurfer.on('audioprocess', autoStopRegionPlay);
+    });
+}
+
+// Reset wavesurfer and clear cache
+function resetWavesurfer() {
+    wavesurfer.destroy();
+    wavesurfer = null;
+    configureWavesurfer();
+}
+
+configureWavesurfer();
 
 function uploadSample() {
+    resetWavesurfer();
     // Create an input element of type "file"
     let fileInput = document.createElement('input');
     fileInput.type = 'file';
@@ -63,13 +96,11 @@ function uploadSample() {
         // Check if the file is of type .wav or .mp3
         if (file.type === 'audio/wav' || file.type === 'audio/mp3' || file.type === 'audio/webm') {
             // Use the Wavesurfer.js load method to load the file
-            wsRegions.clearRegions();
-            wavesurfer.load(URL.createObjectURL(file)).then(() => {
-                region = wsRegions.addRegion({
-                    start: wavesurfer.getDuration() * 0.1,
-                    end: wavesurfer.getDuration() * 0.8,
-                    color: "rgba(184, 134, 11, 0.25)"
-                });
+            let url = URL.createObjectURL(file);
+            samplerBuffer.load(url);
+            samplerPlayer.load(url);
+            document.getElementById('effectsControl').style.display = 'flex';
+            wavesurfer.load(url).then(() => {
                 document.getElementById('sampleName').value = file.name.replace(/\.[^/.]+$/, "");
                 stopSampleButton.disabled = true;
                 playSampleButton.disabled = false;
@@ -77,7 +108,7 @@ function uploadSample() {
                 downloadSampleButton.disabled = false;
                 addSampleButton.disabled = false;
             });
-            
+            URL.revokeObjectURL(url);
         } 
         else {
             // Alert the user if the file type is not supported
@@ -88,6 +119,7 @@ function uploadSample() {
 
 // Function to handle start button click
 function startRecording() {
+    resetWavesurfer();
     let chunks = [];
     let trackDuration;
     const startTime = Date.now();
@@ -101,9 +133,6 @@ function startRecording() {
             chunks.push(e.data);
         };
 
-        // Clear current region
-        wsRegions.clearRegions();
-
         mediaRecorder.onstop = function() {
             // Convert the recorded chunks into a single Blob
             const recordedBlob = new Blob(chunks, { type: 'audio/webm' });
@@ -113,19 +142,19 @@ function startRecording() {
             trackDuration = Math.abs(endTime - startTime) / 1000;
 
             // Set the audio element's source to the recorded audio
-            wavesurfer.load(URL.createObjectURL(recordedBlob)).then(() => {
-                region = wsRegions.addRegion({
-                    start: trackDuration * 0.1,
-                    end: trackDuration * 0.8,
-                    color: "rgba(184, 134, 11, 0.25)"
-                });
-            });
+            let url = URL.createObjectURL(recordedBlob);
+            samplerBuffer.load(url);
+            samplerPlayer.load(url);
+            document.getElementById('effectsControl').style.display = 'flex';
+            wavesurfer.load(url);
 
             // Enable the play button
             playSampleButton.disabled = false;
 
             // Clear the chunks array
             chunks = [];
+
+            URL.revokeObjectURL(url);
         };
 
     // Start recording
@@ -198,6 +227,56 @@ function downloadRegion() {
     window.URL.revokeObjectURL(url);
 }
 
+// Listener for slider change on Tone.js effects for samples
+function updateEffects() {
+    let player;
+    let gain;
+    let distortion;
+    let regionStart = region.start;
+    let regionEnd = region.end;
+    resetWavesurfer(); // Clear cache
+
+    // Render effect change using offline context
+    Tone.Offline(() => {
+        player = new Tone.Player(samplerBuffer).toDestination();
+        gain = new Tone.Gain(sampleGain.value).toDestination();
+        distortion = new Tone.Distortion(sampleDistortion.value).toDestination();
+        console.log(sampleGain.value);
+        console.log(sampleDistortion.value);
+        player.chain(gain, distortion);
+        player.start(0);
+    }, samplerBuffer.duration).then((buffer) => {
+
+        let wavFile = audiobufferToWav(buffer);
+        let blob = new window.Blob([ new DataView(wavFile) ], {
+            type: 'audio/wav'
+        });
+        let url = window.URL.createObjectURL(blob);
+
+        // Load effect change into wavesurfer
+        wavesurfer.load(url).then(() => {
+            URL.revokeObjectURL(url);
+            player.dispose();
+            gain.dispose();
+            // Preserve audio trimming
+            region.setOptions({
+                start: regionStart,
+                end: regionEnd,
+            });
+        });
+    });
+}
+
+let samples = []; // Array of samples as Tone.js Players
+let sampleBuffers = []; // Array of samples as ToneAudioBuffers
+let scheduleIds = []; // IDs for sequencer events
+
+let seqColumns; // Columns of the sequencer
+let seqNotes; // Sequencer notes
+let numSamples; // Number of samples
+
+let curNote = 0; // Current note when sequencer is playing
+
 // Setup the transport
 Tone.Transport.set({
     bpm: 120,
@@ -206,10 +285,6 @@ Tone.Transport.set({
     loopEnd: "4m",
     timeSignature: 4
 });
-
-let samples = []; // Array of trimmed audio clips
-let sampleBuffers = [];
-let scheduleIds = [];
 
 // Toggle a note in the sequencer
 function toggleNote(button) {
@@ -222,10 +297,6 @@ function toggleNote(button) {
         button.style.backgroundColor = 'white';
     };
 }
-
-let seqColumns;
-let seqNotes;
-let numSamples;
 
 // Add trimmed audio clip to sequencer roll
 function addSampleToRoll() {
@@ -280,14 +351,15 @@ function addSampleToRoll() {
         }
     });
 
-    samples.push(new Tone.Player(getRegionURL()).toDestination());
-    sampleBuffers.push(new Tone.ToneAudioBuffer(getRegionURL()));
+    let url = getRegionURL();
+    samples.push(new Tone.Player(url).toDestination());
+    sampleBuffers.push(new Tone.ToneAudioBuffer(url));
 
     seqNotes = document.querySelectorAll('.seq-note');
     numSamples = seqNotes.length / 16;
-}
 
-let curNote = 0;
+    URL.revokeObjectURL(url);
+}
 
 // Function to schedule and play active notes
 function playTrack() {
@@ -339,7 +411,7 @@ function stopTrack() {
 
 // Update transport BPM when value changes
 function updateBPM() {
-    Tone.Transport.bpm.value = document.getElementById('trackBPM').value;
+    Tone.Transport.bpm.value = trackBPM.value;
 }
 
 // Remove a sample and its row from the sequencer

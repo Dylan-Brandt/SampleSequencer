@@ -91,8 +91,8 @@ div#playerContainer {
     align-items: center;
     background-color: var(--darkgray);
     margin: 5% 0 5% 0;
-    width: 75%;
-    left: 12.5%;
+    width: 90%;
+    left: 5%;
     position: relative;
     border: 1px solid black;
     border-radius: 10px;

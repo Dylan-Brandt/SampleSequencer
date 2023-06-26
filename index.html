@@ -31,6 +31,12 @@
                 </button>
             </div>
             <div id="waveform"></div>
+            <div id="effectsControl" style="display: none">
+                <label for="sampleGain">Gain:</label>
+                <input type="range" id="sampleGain" name="sampleGain" min="-0.75" max="1" step="0.01">
+                <label for="sampleDistortion">Distortion:</label>
+                <input type="range" id="sampleDistortion" name="sampleDistortion" min="0" max="1" step="0.01" value="0">
+            </div>
         </div>
         <div id="playerContainer">
             <div class="controls">
