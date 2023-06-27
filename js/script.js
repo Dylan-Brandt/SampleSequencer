@@ -17,6 +17,12 @@ window.onload = () => {
     const trackBPM = document.getElementById('trackBPM');
     const sampleGain = document.getElementById('sampleGain');
     const sampleDistortion = document.getElementById('sampleDistortion');
+    const reverbDecay = document.getElementById('reverbDecay');
+    const reverbPreDelay = document.getElementById('reverbPreDelay');
+    const reverbAmount = document.getElementById('reverbAmount');
+    const delayTime = document.getElementById('delayTime');
+    const delayFeedback = document.getElementById('delayFeedback');
+    const delayAmount = document.getElementById('delayAmount');
 
     // Add event listeners
     uploadSampleButton.addEventListener('click', uploadSample);
@@ -30,7 +36,23 @@ window.onload = () => {
     trackBPM.addEventListener('change', updateBPM);
     downloadTrackButton.addEventListener('click', downloadTrack);
     sampleGain.addEventListener('change', updateEffects);
+    sampleGain.addEventListener('change', setGainVal);
     sampleDistortion.addEventListener('change', updateEffects);
+    sampleDistortion.addEventListener('change', setDistortionVal);
+    reverbDecay.addEventListener('change', updateEffects);
+    reverbDecay.addEventListener('change', setReverbDecayVal);
+    reverbPreDelay.addEventListener('change', updateEffects);
+    reverbPreDelay.addEventListener('change', setReverbPreDelayVal);
+    reverbAmount.addEventListener('change', updateEffects);
+    reverbAmount.addEventListener('change', setReverbAmountVal);
+    delayTime.addEventListener('change', updateEffects);
+    delayTime.addEventListener('change', setDelayTimeVal);
+    delayFeedback.addEventListener('change', updateEffects);
+    delayFeedback.addEventListener('change', setDelayFeedbackVal);
+    delayAmount.addEventListener('change', updateEffects);
+    delayAmount.addEventListener('change', setDelayAmountVal);
+
+    configureWavesurfer();
 }
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -78,10 +100,9 @@ function resetWavesurfer() {
     configureWavesurfer();
 }
 
-configureWavesurfer();
-
 function uploadSample() {
     resetWavesurfer();
+    resetEffectLevels();
     // Create an input element of type "file"
     let fileInput = document.createElement('input');
     fileInput.type = 'file';
@@ -100,6 +121,7 @@ function uploadSample() {
             samplerBuffer.load(url);
             samplerPlayer.load(url);
             document.getElementById('effectsControl').style.display = 'flex';
+            setAllEffectValues();
             wavesurfer.load(url).then(() => {
                 document.getElementById('sampleName').value = file.name.replace(/\.[^/.]+$/, "");
                 stopSampleButton.disabled = true;
@@ -120,6 +142,7 @@ function uploadSample() {
 // Function to handle start button click
 function startRecording() {
     resetWavesurfer();
+    resetEffectLevels();
     let chunks = [];
     let trackDuration;
     const startTime = Date.now();
@@ -146,6 +169,7 @@ function startRecording() {
             samplerBuffer.load(url);
             samplerPlayer.load(url);
             document.getElementById('effectsControl').style.display = 'flex';
+            setAllEffectValues();
             wavesurfer.load(url);
 
             // Enable the play button
@@ -232,6 +256,8 @@ function updateEffects() {
     let player;
     let gain;
     let distortion;
+    let reverb;
+    let delay;
     let regionStart = region.start;
     let regionEnd = region.end;
     resetWavesurfer(); // Clear cache
@@ -241,9 +267,22 @@ function updateEffects() {
         player = new Tone.Player(samplerBuffer).toDestination();
         gain = new Tone.Gain(sampleGain.value).toDestination();
         distortion = new Tone.Distortion(sampleDistortion.value).toDestination();
-        console.log(sampleGain.value);
-        console.log(sampleDistortion.value);
-        player.chain(gain, distortion);
+        reverb = new Tone.Reverb().toDestination();
+        reverb.set({
+            decay: reverbDecay.value,
+            preDelay: reverbPreDelay.value,
+            wet: reverbAmount.value
+        });
+        delay = new Tone.FeedbackDelay().toDestination();
+        delay.set({
+            delayTime: delayTime.value,
+            feedback: delayFeedback.value,
+            wet: delayAmount.value
+        });
+        player.connect(gain);
+        player.connect(distortion);
+        player.connect(reverb);
+        player.connect(delay);
         player.start(0);
     }, samplerBuffer.duration).then((buffer) => {
 
@@ -258,6 +297,8 @@ function updateEffects() {
             URL.revokeObjectURL(url);
             player.dispose();
             gain.dispose();
+            reverb.dispose();
+            delay.dispose();
             // Preserve audio trimming
             region.setOptions({
                 start: regionStart,
@@ -265,6 +306,60 @@ function updateEffects() {
             });
         });
     });
+}
+
+function setGainVal() {
+    document.getElementById('sampleGainVal').innerHTML = sampleGain.value;
+}
+
+function setDistortionVal() {
+    document.getElementById('sampleDistortionVal').innerHTML = sampleDistortion.value;
+}
+
+function setReverbDecayVal() {
+    document.getElementById('reverbDecayVal').innerHTML = reverbDecay.value;
+}
+
+function setReverbPreDelayVal() {
+    document.getElementById('reverbPreDelayVal').innerHTML = reverbPreDelay.value;
+}
+
+function setReverbAmountVal() {
+    document.getElementById('reverbAmountVal').innerHTML = reverbAmount.value;
+}
+
+function setDelayTimeVal() {
+    document.getElementById('delayTimeVal').innerHTML = delayTime.value;
+}
+
+function setDelayFeedbackVal() {
+    document.getElementById('delayFeedbackVal').innerHTML = delayFeedback.value;
+}
+
+function setDelayAmountVal() {
+    document.getElementById('delayAmountVal').innerHTML = delayAmount.value;
+}
+
+function setAllEffectValues() {
+    setGainVal();
+    setDistortionVal();
+    setReverbDecayVal();
+    setReverbPreDelayVal();
+    setReverbAmountVal();
+    setDelayTimeVal();
+    setDelayFeedbackVal();
+    setDelayAmountVal();
+}
+
+function resetEffectLevels() {
+    sampleGain.value = 0;
+    sampleDistortion.value = 0;
+    reverbDecay.value = 1.5;
+    reverbPreDelay.value = 0.01;
+    reverbAmount.value = 0;
+    delayTime.value = 0.2;
+    delayFeedback.value = 0;
+    delayAmount.value = 0;
 }
 
 let samples = []; // Array of samples as Tone.js Players

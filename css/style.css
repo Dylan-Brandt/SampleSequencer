@@ -11,8 +11,8 @@ div#samplerContainer {
     position: relative;
     background-color: var(--darkgray);
     margin: 5% 0 0 0;
-    width: 65%;
-    left: 17.5%;
+    width: 80%;
+    left: 10%;
     border: 1px solid black;
     border-radius: 10px;
 }
@@ -26,6 +26,7 @@ div.controls {
     width: 100%;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+    border-bottom: 1px solid black;
 }
 
 input#sampleName, input#trackTitle {
@@ -82,6 +83,56 @@ button#addSampleButton {
 
 div#waveform {
     margin: 0 2% 0 2%;
+}
+
+div#effectsControl {
+    align-items: center;
+    justify-content: center;
+    background-color: #484848;
+    margin: 5% 0;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+}
+
+.effectContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.multiEffectWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.multiEffectContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    transform: rotate(270deg);
+    -moz-transform: rotate(270deg); /*do same for other browsers if required*/
+    margin: 50px 0;
+    width: 100px;
+    height: 5px;
+    background: gray;
+    outline: none;
+    border: 1px solid black;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    cursor: pointer;
+    background: black;
+    width: 8px;
+    height: 35px;
+    border-radius: 2px;
 }
 
 div#playerContainer {
@@ -155,7 +206,7 @@ button.deleteSample, button.muteSample {
     margin: 2px;
 }
 
-input {
+input[type="text"] {
     border: 1px solid black;
 }
 
