@@ -17,12 +17,12 @@ window.onload = () => {
     const trackBPM = document.getElementById('trackBPM');
     const sampleGain = document.getElementById('sampleGain');
     const sampleDistortion = document.getElementById('sampleDistortion');
-    const reverbDecay = document.getElementById('reverbDecay');
-    const reverbPreDelay = document.getElementById('reverbPreDelay');
-    const reverbAmount = document.getElementById('reverbAmount');
     const delayTime = document.getElementById('delayTime');
     const delayFeedback = document.getElementById('delayFeedback');
     const delayAmount = document.getElementById('delayAmount');
+    const reverbDecay = document.getElementById('reverbDecay');
+    const reverbPreDelay = document.getElementById('reverbPreDelay');
+    const reverbAmount = document.getElementById('reverbAmount');
 
     // Add event listeners
     uploadSampleButton.addEventListener('click', uploadSample);
@@ -39,31 +39,27 @@ window.onload = () => {
     sampleGain.addEventListener('change', setGainVal);
     sampleDistortion.addEventListener('change', updateEffects);
     sampleDistortion.addEventListener('change', setDistortionVal);
-    reverbDecay.addEventListener('change', updateEffects);
-    reverbDecay.addEventListener('change', setReverbDecayVal);
-    reverbPreDelay.addEventListener('change', updateEffects);
-    reverbPreDelay.addEventListener('change', setReverbPreDelayVal);
-    reverbAmount.addEventListener('change', updateEffects);
-    reverbAmount.addEventListener('change', setReverbAmountVal);
     delayTime.addEventListener('change', updateEffects);
     delayTime.addEventListener('change', setDelayTimeVal);
     delayFeedback.addEventListener('change', updateEffects);
     delayFeedback.addEventListener('change', setDelayFeedbackVal);
     delayAmount.addEventListener('change', updateEffects);
     delayAmount.addEventListener('change', setDelayAmountVal);
+    reverbDecay.addEventListener('change', updateEffects);
+    reverbDecay.addEventListener('change', setReverbDecayVal);
+    reverbPreDelay.addEventListener('change', updateEffects);
+    reverbPreDelay.addEventListener('change', setReverbPreDelayVal);
+    reverbAmount.addEventListener('change', updateEffects);
+    reverbAmount.addEventListener('change', setReverbAmountVal);
 
     configureWavesurfer();
 }
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+audioCtx.resume();
 let region;
 let mediaRecorder;
-
-let samplerPlayer = new Tone.Player();
 let samplerBuffer = new Tone.ToneAudioBuffer();
-let gain = new Tone.Gain(0);
-let distortion = new Tone.Distortion(0);
-
 let wavesurfer;
 let wsRegions;
 
@@ -83,9 +79,9 @@ function configureWavesurfer() {
             end: wavesurfer.getDuration(),
             color: "rgba(184, 134, 11, 0.25)"
         });
-    })
+    });
+
     wsRegions = wavesurfer.registerPlugin(RegionsPlugin.create());
-    
     wsRegions.on('region-clicked', (region, e) => {
         e.stopPropagation();
         region.play();
@@ -101,25 +97,25 @@ function resetWavesurfer() {
 }
 
 function uploadSample() {
+
+    // Clear cache and reset effects
     resetWavesurfer();
     resetEffectLevels();
-    // Create an input element of type "file"
+
+    // Select file
     let fileInput = document.createElement('input');
     fileInput.type = 'file';
-
-    // Trigger click event on the file input
     fileInput.click();
 
     // Listen for file selection
-    fileInput.addEventListener('change', function(event) {
+    fileInput.addEventListener('change', (event) => {
         let file = event.target.files[0];
-        
+        console.log(file.type);
         // Check if the file is of type .wav or .mp3
-        if (file.type === 'audio/wav' || file.type === 'audio/mp3' || file.type === 'audio/webm') {
+        if (file.type === 'audio/wav' || file.type === 'audio/mpeg' || file.type === 'audio/webm') {
             // Use the Wavesurfer.js load method to load the file
             let url = URL.createObjectURL(file);
             samplerBuffer.load(url);
-            samplerPlayer.load(url);
             document.getElementById('effectsControl').style.display = 'flex';
             setAllEffectValues();
             wavesurfer.load(url).then(() => {
@@ -144,7 +140,6 @@ function startRecording() {
     resetWavesurfer();
     resetEffectLevels();
     let chunks = [];
-    let trackDuration;
     const startTime = Date.now();
     
     navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(function(stream) {
@@ -162,23 +157,18 @@ function startRecording() {
 
             // Get the length of the audio clip
             const endTime = Date.now();
-            trackDuration = Math.abs(endTime - startTime) / 1000;
 
-            // Set the audio element's source to the recorded audio
+            // Send recording to wavesurfer and buffer
             let url = URL.createObjectURL(recordedBlob);
             samplerBuffer.load(url);
-            samplerPlayer.load(url);
+            wavesurfer.load(url);
+            URL.revokeObjectURL(url);
+
+            // Enable the play button and display effect editor
+            playSampleButton.disabled = false;
+            document.getElementById('sampleName').value = '';
             document.getElementById('effectsControl').style.display = 'flex';
             setAllEffectValues();
-            wavesurfer.load(url);
-
-            // Enable the play button
-            playSampleButton.disabled = false;
-
-            // Clear the chunks array
-            chunks = [];
-
-            URL.revokeObjectURL(url);
         };
 
     // Start recording
@@ -197,10 +187,8 @@ function startRecording() {
 
 // Function to handle stop button click
 function stopRecording() {
-    // Stop recording
     mediaRecorder.stop();
 
-    // Disable stop button and enable start button
     stopSampleButton.disabled = true;
     recordSampleButton.disabled = false;
     downloadSampleButton.disabled = false;
@@ -212,7 +200,7 @@ function playRecording() {
     wavesurfer.play();
 }
 
-// Function to stop audio when trimmed audio finishes playing
+// Stop audio when trimmed clip finishes playing
 function autoStopRegionPlay() {
     if (wavesurfer.getCurrentTime() >= region.end) {
         wavesurfer.stop();
@@ -222,22 +210,14 @@ function autoStopRegionPlay() {
 
 // Create a wav encoded URL for trimmed audio clip
 function getRegionURL() {
-    // Get the selected region's start and end times
-    const startTime = region.start;
-    const endTime = region.end;
-
     let sourceBuffer = wavesurfer.getDecodedData();
-    let destinationBuffer = audioCtx.createBuffer(1, Math.round(audioCtx.sampleRate * (endTime - startTime)), audioCtx.sampleRate);
+    let destinationBuffer = audioCtx.createBuffer(1, Math.round(audioCtx.sampleRate * (region.end - region.start)), audioCtx.sampleRate);
 
-    sourceBuffer.copyFromChannel(destinationBuffer.getChannelData(0), 0, sourceBuffer.sampleRate * startTime);
-
-    // Create a new WAV file from the destination buffer
+    sourceBuffer.copyFromChannel(destinationBuffer.getChannelData(0), 0, sourceBuffer.sampleRate * region.start);
     let wavFile = audiobufferToWav(destinationBuffer);
-
     let blob = new window.Blob([ new DataView(wavFile) ], {
         type: 'audio/wav'
     });
-
     return window.URL.createObjectURL(blob);
 }
 
@@ -253,37 +233,29 @@ function downloadRegion() {
 
 // Listener for slider change on Tone.js effects for samples
 function updateEffects() {
-    let player;
-    let gain;
-    let distortion;
-    let reverb;
-    let delay;
     let regionStart = region.start;
     let regionEnd = region.end;
     resetWavesurfer(); // Clear cache
 
-    // Render effect change using offline context
-    Tone.Offline(() => {
-        player = new Tone.Player(samplerBuffer).toDestination();
-        gain = new Tone.Gain(sampleGain.value).toDestination();
-        distortion = new Tone.Distortion(sampleDistortion.value).toDestination();
-        reverb = new Tone.Reverb().toDestination();
-        reverb.set({
-            decay: reverbDecay.value,
-            preDelay: reverbPreDelay.value,
-            wet: reverbAmount.value
-        });
-        delay = new Tone.FeedbackDelay().toDestination();
+    // Render effects using offline context
+    Tone.Offline((context) => {
+        let player = new Tone.Player(samplerBuffer);
+        player.volume.value = Number(sampleGain.value);
+        let distortion = new Tone.Distortion(Number(sampleDistortion.value));
+        let delay = new Tone.FeedbackDelay();
         delay.set({
-            delayTime: delayTime.value,
-            feedback: delayFeedback.value,
-            wet: delayAmount.value
+            delayTime: Number(delayTime.value),
+            feedback: Number(delayFeedback.value),
+            wet: Number(delayAmount.value)
         });
-        player.connect(gain);
-        player.connect(distortion);
-        player.connect(reverb);
-        player.connect(delay);
-        player.start(0);
+        let reverb = new Tone.Reverb();
+        reverb.set({
+            decay: Number(reverbDecay.value),
+            preDelay: Number(reverbPreDelay.value),
+            wet: Number(reverbAmount.value)
+        });
+        player.chain(distortion, delay, reverb, context.destination);
+        player.start().toDestination();
     }, samplerBuffer.duration).then((buffer) => {
 
         let wavFile = audiobufferToWav(buffer);
@@ -295,10 +267,6 @@ function updateEffects() {
         // Load effect change into wavesurfer
         wavesurfer.load(url).then(() => {
             URL.revokeObjectURL(url);
-            player.dispose();
-            gain.dispose();
-            reverb.dispose();
-            delay.dispose();
             // Preserve audio trimming
             region.setOptions({
                 start: regionStart,
@@ -308,38 +276,17 @@ function updateEffects() {
     });
 }
 
-function setGainVal() {
-    document.getElementById('sampleGainVal').innerHTML = sampleGain.value;
-}
+// Functions to set the labels for each effect value 
+function setGainVal() {document.getElementById('sampleGainVal').innerHTML = (sampleGain.value).toString() + 'dB';}
+function setDistortionVal() {document.getElementById('sampleDistortionVal').innerHTML = (sampleDistortion.value * 100).toString() + '%';}
+function setReverbDecayVal() {document.getElementById('reverbDecayVal').innerHTML = reverbDecay.value.toString() + 's';}
+function setReverbPreDelayVal() {document.getElementById('reverbPreDelayVal').innerHTML = (reverbPreDelay.value * 1000).toString() + 'ms';}
+function setReverbAmountVal() {document.getElementById('reverbAmountVal').innerHTML = (reverbAmount.value * 100).toString() + '%';}
+function setDelayTimeVal() {document.getElementById('delayTimeVal').innerHTML = delayTime.value.toString() + 's';}
+function setDelayFeedbackVal() {document.getElementById('delayFeedbackVal').innerHTML = (delayFeedback.value * 100).toString() + '%';}
+function setDelayAmountVal() {document.getElementById('delayAmountVal').innerHTML = (delayAmount.value * 100).toString() + '%';}
 
-function setDistortionVal() {
-    document.getElementById('sampleDistortionVal').innerHTML = sampleDistortion.value;
-}
-
-function setReverbDecayVal() {
-    document.getElementById('reverbDecayVal').innerHTML = reverbDecay.value;
-}
-
-function setReverbPreDelayVal() {
-    document.getElementById('reverbPreDelayVal').innerHTML = reverbPreDelay.value;
-}
-
-function setReverbAmountVal() {
-    document.getElementById('reverbAmountVal').innerHTML = reverbAmount.value;
-}
-
-function setDelayTimeVal() {
-    document.getElementById('delayTimeVal').innerHTML = delayTime.value;
-}
-
-function setDelayFeedbackVal() {
-    document.getElementById('delayFeedbackVal').innerHTML = delayFeedback.value;
-}
-
-function setDelayAmountVal() {
-    document.getElementById('delayAmountVal').innerHTML = delayAmount.value;
-}
-
+// Set all values
 function setAllEffectValues() {
     setGainVal();
     setDistortionVal();
@@ -351,6 +298,7 @@ function setAllEffectValues() {
     setDelayAmountVal();
 }
 
+// Set default values
 function resetEffectLevels() {
     sampleGain.value = 0;
     sampleDistortion.value = 0;
@@ -360,37 +308,6 @@ function resetEffectLevels() {
     delayTime.value = 0.2;
     delayFeedback.value = 0;
     delayAmount.value = 0;
-}
-
-let samples = []; // Array of samples as Tone.js Players
-let sampleBuffers = []; // Array of samples as ToneAudioBuffers
-let scheduleIds = []; // IDs for sequencer events
-
-let seqColumns; // Columns of the sequencer
-let seqNotes; // Sequencer notes
-let numSamples; // Number of samples
-
-let curNote = 0; // Current note when sequencer is playing
-
-// Setup the transport
-Tone.Transport.set({
-    bpm: 120,
-    loop: true,
-    loopStart: 0,
-    loopEnd: "4m",
-    timeSignature: 4
-});
-
-// Toggle a note in the sequencer
-function toggleNote(button) {
-    if(button.getAttribute('active') === null) {
-        button.setAttribute('active', '');
-        button.style.backgroundColor = 'black';
-    }
-    else {
-        button.removeAttribute('active', '');
-        button.style.backgroundColor = 'white';
-    };
 }
 
 // Add trimmed audio clip to sequencer roll
@@ -449,11 +366,38 @@ function addSampleToRoll() {
     let url = getRegionURL();
     samples.push(new Tone.Player(url).toDestination());
     sampleBuffers.push(new Tone.ToneAudioBuffer(url));
-
+    URL.revokeObjectURL(url);
     seqNotes = document.querySelectorAll('.seq-note');
     numSamples = seqNotes.length / 16;
+}
 
-    URL.revokeObjectURL(url);
+let samples = []; // Array of samples as Tone.js Players
+let sampleBuffers = []; // Array of samples as ToneAudioBuffers
+let scheduleIds = []; // IDs for sequencer events
+let seqColumns; // Columns of the sequencer
+let seqNotes; // Sequencer notes
+let numSamples; // Number of samples
+let curNote = 0; // Current note when sequencer is playing
+
+// Setup the transport
+Tone.Transport.set({
+    bpm: 120,
+    loop: true,
+    loopStart: 0,
+    loopEnd: "4m",
+    timeSignature: 4
+});
+
+// Toggle a note in the sequencer
+function toggleNote(button) {
+    if(button.getAttribute('active') === null) {
+        button.setAttribute('active', '');
+        button.style.backgroundColor = 'black';
+    }
+    else {
+        button.removeAttribute('active', '');
+        button.style.backgroundColor = 'white';
+    };
 }
 
 // Function to schedule and play active notes
@@ -588,7 +532,7 @@ function downloadTrack() {
                 noteIndex = curNote * numSamples + i;
                 currentSample = noteIndex % numSamples;
                 // Play sample if it is activated
-                if(seqNotes[noteIndex].getAttribute('active') != null) {
+                if(seqNotes[noteIndex].getAttribute('active') != null && seqNotes[noteIndex].getAttribute('muted') == null) {
                     offlineSamples[currentSample].toDestination().start(time);
                 }
             }

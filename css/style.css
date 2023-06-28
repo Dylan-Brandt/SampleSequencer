@@ -81,17 +81,13 @@ button#addSampleButton {
     border-bottom: 4px solid gray;
 }
 
-div#waveform {
-    margin: 0 2% 0 2%;
-}
-
 div#effectsControl {
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     background-color: #484848;
-    margin: 5% 0;
-    border-bottom: 1px solid black;
     border-top: 1px solid black;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
 }
 
 .effectContainer {
@@ -106,6 +102,15 @@ div#effectsControl {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.multiEffectWrapper span.effectsLabel {
+    font-family: var(--font);
+    font-size: 1.5em;
+}
+
+span {
+    font-family: var(--font);
 }
 
 .multiEffectContainer {
