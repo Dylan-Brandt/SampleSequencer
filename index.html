@@ -17,11 +17,11 @@
                 <button id="recordSampleButton" class="controlButton">
                     <img src="resources/images/icons8-record-48.png">
                 </button>
+                <button id="playSampleButton" class="controlButton" disabled>
+                    <img src="resources/images/icons8-play-button-30.png" width="25px" height="25px">
+                </button>
                 <button id="stopSampleButton" class="controlButton" disabled>
                     <img src="resources/images/icons8-stop-30.png">
-                </button>
-                <button id="playSampleButton" class="controlButton" disabled>
-                    <img src="resources/images/icons8-play-button-30.png">
                 </button>
                 <button id="downloadSampleButton" class="controlButton" disabled>
                     <img src="resources/images/icons8-downloading-updates-48.png" width="30px" height="30px">
@@ -41,7 +41,7 @@
                             <span id="sampleGainVal"></span>
                         </div>
                         <div class="effectContainer">
-                            <label for="sampleDistortion">Distortion</label>
+                            <label for="sampleDistortion">Distort</label>
                             <input type="range" id="sampleDistortion" name="sampleDistortion" min="0" max="1" step="0.01" value="0">
                             <span id="sampleDistortionVal"></span>
                         </div>
@@ -95,7 +95,7 @@
                 <label for="trackBPM">BPM</label>
                 <input id="trackBPM" name="trackBPM" value="120" type="text">
                 <button id="playTrackButton" class="controlButton" disabled>
-                    <img src="resources/images/icons8-play-button-30.png">
+                    <img src="resources/images/icons8-play-button-30.png" width="25px" height="25px">
                 </button>
                 <button id="stopTrackButton" class="controlButton" disabled>
                     <img src="resources/images/icons8-stop-30.png">

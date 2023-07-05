@@ -1,5 +1,5 @@
-import WaveSurfer from 'https://unpkg.com/wavesurfer.js@beta';
-import RegionsPlugin from 'https://unpkg.com/wavesurfer.js@beta/dist/plugins/regions.js';
+import WaveSurfer from 'https://unpkg.com/wavesurfer.js@7.0.0-beta.11/dist/wavesurfer.js';
+import RegionsPlugin from 'https://unpkg.com/wavesurfer.js@7.0.0-beta.11/dist/plugins/regions.js';
 import audiobufferToWav from 'https://cdn.jsdelivr.net/npm/audiobuffer-to-wav@1.0.0/+esm';
 import * as Tone from 'https://cdn.jsdelivr.net/npm/tone@14.7.77/+esm';
 
@@ -26,8 +26,8 @@ window.onload = () => {
 
     // Add event listeners
     uploadSampleButton.addEventListener('click', uploadSample);
-    recordSampleButton.addEventListener('click', startRecording);
-    stopSampleButton.addEventListener('click', stopRecording);
+    recordSampleButton.addEventListener('click', record);
+    stopSampleButton.addEventListener('click', stopSamplePlay);
     playSampleButton.addEventListener('click', playRecording);
     downloadSampleButton.addEventListener('click', downloadRegion);
     addSampleButton.addEventListener('click', addSampleToRoll);
@@ -72,20 +72,26 @@ function configureWavesurfer() {
         sampleRate: audioCtx.sampleRate
     });
 
-    wavesurfer.on('ready', () => {
-        wsRegions.clearRegions();
-        region = wsRegions.addRegion({
-            start: 0,
-            end: wavesurfer.getDuration(),
-            color: "rgba(184, 134, 11, 0.25)"
-        });
-    });
-
     wsRegions = wavesurfer.registerPlugin(RegionsPlugin.create());
     wsRegions.on('region-clicked', (region, e) => {
         e.stopPropagation();
         region.play();
         wavesurfer.on('audioprocess', autoStopRegionPlay);
+    });
+
+    wavesurfer.on('ready', () => {
+        wsRegions.clearRegions();
+        region = wsRegions.addRegion({
+            start: 0,
+            end: wavesurfer.getDuration(),
+            color: "rgba(184, 134, 11, 0.25)",
+            resize: true,
+            drag: true  
+        });
+    });
+
+    wavesurfer.on('finish', () => {
+        playSampleButton.style.backgroundColor = 'lightgray';
     });
 }
 
@@ -97,7 +103,6 @@ function resetWavesurfer() {
 }
 
 function uploadSample() {
-
     // Clear cache and reset effects
     resetWavesurfer();
     resetEffectLevels();
@@ -110,7 +115,6 @@ function uploadSample() {
     // Listen for file selection
     fileInput.addEventListener('change', (event) => {
         let file = event.target.files[0];
-        console.log(file.type);
         // Check if the file is of type .wav or .mp3
         if (file.type === 'audio/wav' || file.type === 'audio/mpeg' || file.type === 'audio/webm') {
             // Use the Wavesurfer.js load method to load the file
@@ -120,7 +124,7 @@ function uploadSample() {
             setAllEffectValues();
             wavesurfer.load(url).then(() => {
                 document.getElementById('sampleName').value = file.name.replace(/\.[^/.]+$/, "");
-                stopSampleButton.disabled = true;
+                stopSampleButton.disabled = false;
                 playSampleButton.disabled = false;
                 recordSampleButton.disabled = false;
                 downloadSampleButton.disabled = false;
@@ -136,11 +140,25 @@ function uploadSample() {
 }
 
 // Function to handle start button click
-function startRecording() {
+function record() {
+    if(recordSampleButton.getAttribute('recording') != null) {
+        console.log('stop');
+        mediaRecorder.stop();
+
+        stopSampleButton.disabled = false;
+        downloadSampleButton.disabled = false;
+        addSampleButton.disabled = false;
+        recordSampleButton.removeAttribute('recording', '');
+        recordSampleButton.style.backgroundColor = 'lightgray';
+        return;
+    }
+    console.log('start');
+
     resetWavesurfer();
     resetEffectLevels();
     let chunks = [];
     const startTime = Date.now();
+    recordSampleButton.setAttribute('recording', '');
     
     navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(function(stream) {
         // Create a new MediaRecorder instance with the stream
@@ -173,31 +191,27 @@ function startRecording() {
 
     // Start recording
     mediaRecorder.start();
-
-    // Disable start button and enable stop button
-    recordSampleButton.disabled = true;
-    stopSampleButton.disabled = false;
+    
+    recordSampleButton.style.backgroundColor = 'gray';
+    playSampleButton.disabled = true;
+    stopSampleButton.disabled = true;
     downloadSampleButton.disabled = true;
     addSampleButton.disabled = true;
-    })
-    .catch(function(err) {
+    }).catch(function(err) {
     console.error('Error accessing the microphone: ', err);
     });
 }
 
 // Function to handle stop button click
-function stopRecording() {
-    mediaRecorder.stop();
-
-    stopSampleButton.disabled = true;
-    recordSampleButton.disabled = false;
-    downloadSampleButton.disabled = false;
-    addSampleButton.disabled = false;
+function stopSamplePlay() {
+    wavesurfer.stop();
+    playSampleButton.style.backgroundColor = 'lightgray';
 }
 
 // Function to handle play button click
 function playRecording() {
     wavesurfer.play();
+    playSampleButton.style.backgroundColor = 'gray';
 }
 
 // Stop audio when trimmed clip finishes playing
@@ -277,14 +291,14 @@ function updateEffects() {
 }
 
 // Functions to set the labels for each effect value 
-function setGainVal() {document.getElementById('sampleGainVal').innerHTML = (sampleGain.value).toString() + 'dB';}
-function setDistortionVal() {document.getElementById('sampleDistortionVal').innerHTML = (sampleDistortion.value * 100).toString() + '%';}
-function setReverbDecayVal() {document.getElementById('reverbDecayVal').innerHTML = reverbDecay.value.toString() + 's';}
-function setReverbPreDelayVal() {document.getElementById('reverbPreDelayVal').innerHTML = (reverbPreDelay.value * 1000).toString() + 'ms';}
-function setReverbAmountVal() {document.getElementById('reverbAmountVal').innerHTML = (reverbAmount.value * 100).toString() + '%';}
-function setDelayTimeVal() {document.getElementById('delayTimeVal').innerHTML = delayTime.value.toString() + 's';}
-function setDelayFeedbackVal() {document.getElementById('delayFeedbackVal').innerHTML = (delayFeedback.value * 100).toString() + '%';}
-function setDelayAmountVal() {document.getElementById('delayAmountVal').innerHTML = (delayAmount.value * 100).toString() + '%';}
+function setGainVal() {document.getElementById('sampleGainVal').innerHTML = Math.round(sampleGain.value).toString() + 'dB';}
+function setDistortionVal() {document.getElementById('sampleDistortionVal').innerHTML = Math.round(sampleDistortion.value * 100).toString() + '%';}
+function setReverbDecayVal() {document.getElementById('reverbDecayVal').innerHTML = Math.round(reverbDecay.value).toString() + 's';}
+function setReverbPreDelayVal() {document.getElementById('reverbPreDelayVal').innerHTML = Math.round(reverbPreDelay.value * 1000).toString() + 'ms';}
+function setReverbAmountVal() {document.getElementById('reverbAmountVal').innerHTML = Math.round(reverbAmount.value * 100).toString() + '%';}
+function setDelayTimeVal() {document.getElementById('delayTimeVal').innerHTML = (delayTime.value).toString() + 's';}
+function setDelayFeedbackVal() {document.getElementById('delayFeedbackVal').innerHTML = Math.round(delayFeedback.value * 100).toString() + '%';}
+function setDelayAmountVal() {document.getElementById('delayAmountVal').innerHTML = Math.round(delayAmount.value * 100).toString() + '%';}
 
 // Set all values
 function setAllEffectValues() {
@@ -405,6 +419,7 @@ function playTrack() {
     let noteIndex;
     let currentSample;
     let currentBeat;
+    
 
     scheduleIds.push(Tone.Transport.scheduleRepeat((time) => {
         if(curNote > 15) {
@@ -429,6 +444,7 @@ function playTrack() {
     }, '4n'));
     Tone.start();
     Tone.Transport.start();
+    playTrackButton.style.backgroundColor = 'gray';
     playTrackButton.disabled = true;
     stopTrackButton.disabled = false;
 }
@@ -443,7 +459,8 @@ function stopTrack() {
     curNote = 0;
     seqColumns.forEach((element) => {
         element.style['background-color'] = 'gray';
-    })
+    });
+    playTrackButton.style.backgroundColor = 'lightgray';
     playTrackButton.disabled = false;
     stopTrackButton.disabled = true;
 }
