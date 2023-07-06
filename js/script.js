@@ -13,6 +13,8 @@ window.onload = () => {
     const addSampleButton = document.getElementById('addSampleButton');
     const playTrackButton = document.getElementById('playTrackButton');
     const stopTrackButton = document.getElementById('stopTrackButton');
+    const selectEffect = document.getElementById('selectEffect');
+    const closeEffectButtons = document.getElementsByClassName('closeEffect');
     const downloadTrackButton = document.getElementById('downloadTrackButton');
     const trackBPM = document.getElementById('trackBPM');
     const sampleGain = document.getElementById('sampleGain');
@@ -33,6 +35,10 @@ window.onload = () => {
     addSampleButton.addEventListener('click', addSampleToRoll);
     playTrackButton.addEventListener('click', playTrack);
     stopTrackButton.addEventListener('click', stopTrack);
+    selectEffect.addEventListener('change', openEffectControl);
+    Array.from(closeEffectButtons).forEach((element) => {
+        element.addEventListener('click', closeEffectControl)
+    })
     trackBPM.addEventListener('change', updateBPM);
     downloadTrackButton.addEventListener('click', downloadTrack);
     sampleGain.addEventListener('change', updateEffects);
@@ -69,6 +75,7 @@ function configureWavesurfer() {
         container: '#waveform',
         scrollParent: true,
         waveColor: 'white',
+        normalize: true,
         sampleRate: audioCtx.sampleRate
     });
 
@@ -120,7 +127,6 @@ function uploadSample() {
             // Use the Wavesurfer.js load method to load the file
             let url = URL.createObjectURL(file);
             samplerBuffer.load(url);
-            document.getElementById('effectsControl').style.display = 'flex';
             setAllEffectValues();
             wavesurfer.load(url).then(() => {
                 document.getElementById('sampleName').value = file.name.replace(/\.[^/.]+$/, "");
@@ -129,6 +135,7 @@ function uploadSample() {
                 recordSampleButton.disabled = false;
                 downloadSampleButton.disabled = false;
                 addSampleButton.disabled = false;
+                selectEffect.disabled = false;
             });
             URL.revokeObjectURL(url);
         } 
@@ -142,17 +149,16 @@ function uploadSample() {
 // Function to handle start button click
 function record() {
     if(recordSampleButton.getAttribute('recording') != null) {
-        console.log('stop');
         mediaRecorder.stop();
 
         stopSampleButton.disabled = false;
         downloadSampleButton.disabled = false;
         addSampleButton.disabled = false;
+        selectEffect.disabled = false;
         recordSampleButton.removeAttribute('recording', '');
         recordSampleButton.style.backgroundColor = 'lightgray';
         return;
     }
-    console.log('start');
 
     resetWavesurfer();
     resetEffectLevels();
@@ -185,7 +191,6 @@ function record() {
             // Enable the play button and display effect editor
             playSampleButton.disabled = false;
             document.getElementById('sampleName').value = '';
-            document.getElementById('effectsControl').style.display = 'flex';
             setAllEffectValues();
         };
 
@@ -197,6 +202,7 @@ function record() {
     stopSampleButton.disabled = true;
     downloadSampleButton.disabled = true;
     addSampleButton.disabled = true;
+    selectEffect.disabled = true;
     }).catch(function(err) {
     console.error('Error accessing the microphone: ', err);
     });
@@ -243,6 +249,18 @@ function downloadRegion() {
     anchor.download = document.getElementById('sampleName').value ? document.getElementById('sampleName').value + '.wav' : 'sample.wav';
     anchor.click();
     window.URL.revokeObjectURL(url);
+}
+
+function openEffectControl() {
+    selectEffect.disabled = true;
+    let effectContainer = document.getElementById(selectEffect.value + 'Control');
+    effectContainer.style.display = 'flex';
+}
+
+function closeEffectControl() {
+    selectEffect.disabled = false;
+    document.getElementById(selectEffect.value + 'Control').style.display = 'none';
+    selectEffect.value = 'placeholder';
 }
 
 // Listener for slider change on Tone.js effects for samples
@@ -441,7 +459,7 @@ function playTrack() {
             }
         }
         curNote++;
-    }, '4n'));
+    }, '16n'));
     Tone.start();
     Tone.Transport.start();
     playTrackButton.style.backgroundColor = 'gray';
@@ -554,7 +572,7 @@ function downloadTrack() {
                 }
             }
             curNote++;
-        }, '4n');
+        }, '16n');
         // Start the transport
         transport.start();
 

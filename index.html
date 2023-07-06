@@ -23,6 +23,67 @@
                 <button id="stopSampleButton" class="controlButton" disabled>
                     <img src="resources/images/icons8-stop-30.png">
                 </button>
+                <div class="sliderContainer" id="sampleGainControl" style="display: none">
+                    <div class="closeEffectButtonContainer"><button class="closeEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <label for="sampleGain">Gain</label>
+                    <input type="range" id="sampleGain" name="sampleGain" min="-20" max="10" step="0.01">
+                    <span id="sampleGainVal"></span>
+                </div>
+                <div class="sliderContainer" id="sampleDistortionControl" style="display: none">
+                    <div class="closeEffectButtonContainer"><button class="closeEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <label for="sampleDistortion">Distortion</label>
+                    <input type="range" id="sampleDistortion" name="sampleDistortion" min="0" max="1" step="0.01" value="0">
+                    <span id="sampleDistortionVal"></span>
+                </div>
+                <div id="sampleDelayControl" style="display: none">
+                    <div class="closeEffectButtonContainer"><button class="closeEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <span class="effectsLabel">Delay</span>
+                    <div class="multiEffectContainer">
+                        <div class="sliderContainer">
+                            <label for="delayTime">Time</label>
+                            <input type="range" id="delayTime" name="delayTime" min="0" max="1" step="0.01" value="0.2">
+                            <span id="delayTimeVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="delayFeedback">Feedback</label>
+                            <input type="range" id="delayFeedback" name="delayFeedback" min="0" max="1" step="0.01" value="0">
+                            <span id="delayFeedbackVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="delayAmount">Amount</label>
+                            <input type="range" id="delayAmount" name="delayAmount" min="0" max="1" step="0.01" value="0">
+                            <span id="delayAmountVal"></span>
+                        </div>
+                    </div>
+                </div>
+                <div id="sampleReverbControl" style="display: none">
+                    <div class="closeEffectButtonContainer"><button class="closeEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <span class="effectsLabel">Reverb</span>
+                    <div class="multiEffectContainer">
+                        <div class="sliderContainer">
+                            <label for="reverbDecay">Decay</label>
+                            <input type="range" id="reverbDecay" name="reverbDecay" min="1" max="5" step="0.01" value="1.5">
+                            <span id="reverbDecayVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="reverbPreDelay">Pre Delay</label>
+                            <input type="range" id="reverbPreDelay" name="reverbPreDelay" min="0" max="0.02" step="0.0001" value="0">
+                            <span id="reverbPreDelayVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="reverbAmount">Amount</label>
+                            <input type="range" id="reverbAmount" name="reverbAmount" min="0" max="1" step="0.01" value="0">
+                            <span id="reverbAmountVal"></span>
+                        </div>
+                    </div>
+                </div>
+                <select name="selectEffect" id="selectEffect" disabled>
+                    <option value="placeholder" disabled selected>Effect</option>
+                    <option value="sampleGain">Gain</option>
+                    <option value="sampleDistortion">Distortion</option>
+                    <option value="sampleDelay">Delay</option>
+                    <option value="sampleReverb">Reverb</option>
+                </select>
                 <button id="downloadSampleButton" class="controlButton" disabled>
                     <img src="resources/images/icons8-downloading-updates-48.png" width="30px" height="30px">
                 </button>
@@ -31,63 +92,6 @@
                 </button>
             </div>
             <div id="waveform"></div>
-            <div id="effectsControl" style="display: none">
-                <div class="multiEffectWrapper">
-                    <span class="effectsLabel">Level</span>
-                    <div class="multiEffectContainer">
-                        <div class="effectContainer">
-                            <label for="sampleGain">Gain</label>
-                            <input type="range" id="sampleGain" name="sampleGain" min="-20" max="10" step="0.01">
-                            <span id="sampleGainVal"></span>
-                        </div>
-                        <div class="effectContainer">
-                            <label for="sampleDistortion">Distort</label>
-                            <input type="range" id="sampleDistortion" name="sampleDistortion" min="0" max="1" step="0.01" value="0">
-                            <span id="sampleDistortionVal"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="multiEffectWrapper">
-                    <span class="effectsLabel">Delay</span>
-                    <div class="multiEffectContainer">
-                        <div class="effectContainer">
-                            <label for="delayTime">Time</label>
-                            <input type="range" id="delayTime" name="delayTime" min="0" max="1" step="0.01" value="0.2">
-                            <span id="delayTimeVal"></span>
-                        </div>
-                        <div class="effectContainer">
-                            <label for="delayFeedback">Feedback</label>
-                            <input type="range" id="delayFeedback" name="delayFeedback" min="0" max="1" step="0.01" value="0">
-                            <span id="delayFeedbackVal"></span>
-                        </div>
-                        <div class="effectContainer">
-                            <label for="delayAmount">Amount</label>
-                            <input type="range" id="delayAmount" name="delayAmount" min="0" max="1" step="0.01" value="0">
-                            <span id="delayAmountVal"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="multiEffectWrapper">
-                    <span class="effectsLabel">Reverb</span>
-                    <div class="multiEffectContainer">
-                        <div class="effectContainer">
-                            <label for="reverbDecay">Decay</label>
-                            <input type="range" id="reverbDecay" name="reverbDecay" min="1" max="5" step="0.01" value="1.5">
-                            <span id="reverbDecayVal"></span>
-                        </div>
-                        <div class="effectContainer">
-                            <label for="reverbPreDelay">Pre Delay</label>
-                            <input type="range" id="reverbPreDelay" name="reverbPreDelay" min="0" max="0.02" step="0.0001" value="0">
-                            <span id="reverbPreDelayVal"></span>
-                        </div>
-                        <div class="effectContainer">
-                            <label for="reverbAmount">Amount</label>
-                            <input type="range" id="reverbAmount" name="reverbAmount" min="0" max="1" step="0.01" value="0">
-                            <span id="reverbAmountVal"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
         <div id="playerContainer">
             <div class="controls">

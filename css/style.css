@@ -16,7 +16,7 @@ div#samplerContainer {
     margin-left: auto;
     margin-right: auto;
     border: 1px solid black;
-    border-radius: 10px;
+    border-radius: 10px 10px 0 0;
 }
 
 div.controls {
@@ -33,9 +33,24 @@ div.controls {
 
 input#sampleName, input#trackTitle {
     height: 35px;
+    width: 100px;
     margin: 2px;
     font-family: var(--font);
     font-size: 1.2em;
+}
+
+select#selectEffect {
+    height: 40px;
+    width: 75px;
+    background-color: lightgray;
+    margin: 1px;
+    border-bottom: 4px solid gray;
+    font-family: var(--font);
+    font-size: 1.2em;
+}
+
+select#selectEffect:hover {
+    cursor: pointer;
 }
 
 label {
@@ -63,7 +78,7 @@ input#trackBPM {
     border-bottom: 4px solid gray;
 }
 
-.controlButton:hover, button#addSampleButton:hover, .deleteSample:hover, .muteSample:hover {
+.controlButton:hover, button#addSampleButton:hover, .deleteSample:hover, .muteSample:hover, .closeEffect {
     cursor: pointer;
     background-color: gray;
 }
@@ -92,11 +107,45 @@ div#effectsControl {
     border-bottom-left-radius: 10px;
 }
 
-.effectContainer {
+.sliderContainer {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.sliderContainer label {
+    margin: 0 20px;
+}
+
+#sampleGainControl, #sampleDistortionControl, #sampleDelayControl, #sampleReverbControl {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 5%;
+    z-index: 1000;
+    background-color: #484848;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.closeEffect {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    float: right;
+    height: 20px;
+    width: 20px;
+    background-color: #484848;
+    border: none;
+    border-top-right-radius: 10px;
+}
+
+.closeEffectButtonContainer {
+    width: 100%;
+    margin-bottom: -10px;
 }
 
 .multiEffectWrapper {
@@ -107,7 +156,7 @@ div#effectsControl {
     width: 33%;
 }
 
-.multiEffectWrapper span.effectsLabel {
+span.effectsLabel {
     font-family: var(--font);
     font-size: 1.5em;
 }
