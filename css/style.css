@@ -78,6 +78,11 @@ input#trackBPM {
     border-bottom: 4px solid gray;
 }
 
+img.controlIcon {
+    height: 25px;
+    width: 25px;
+}
+
 .controlButton:hover, button#addSampleButton:hover, .deleteSample:hover, .muteSample:hover, .closeEffect {
     cursor: pointer;
     background-color: gray;
@@ -275,13 +280,14 @@ input[type="text"] {
 
 @media (max-width: 950px) {
     div#samplerContainer, div#playerContainer {
-        width: 95%;
+        width: 100%;
     }
 
     input#sampleName, input#trackTitle {
         height: 35px;
         margin: 5px;
         width: 25%;
+        font-size: 1em;
     }
 
     .sampleControl {
@@ -294,17 +300,76 @@ input[type="text"] {
 
     button.seq-note {
         border: 1px solid gray;
-        height: 30px;
-        width: 30px;
+        height: 28px;
+        width: 28px;
     }
 
     div.seq-column span {
         width: 150px;
-        height: 30px;
+        height: 28px;
     }
 
     button.muteSample, button.deleteSample {
-        width: 30px;
-        height: 30px;
+        width: 28px;
+        height: 28px;
+    }
+}
+
+@media (max-width: 500px) {
+    div#samplerContainer, div#playerContainer {
+        width: 100%;
+    }
+
+    .sampleControl {
+        width: 10%;
+    }
+
+    div#rollContainer {
+        width: 100%;
+    }
+
+    button.seq-note {
+        border: 1px solid gray;
+        height: 15px;
+        width: 15px;
+    }
+
+    div.seq-column span {
+        display: none;
+    }
+
+    button.muteSample, button.deleteSample {
+        width: 15px;
+        height: 15px;
+    }
+
+    .controlButton {
+        height: 35px;
+        width: 40px;
+    }
+
+    img.controlIcon {
+        height: 20px;
+        width: 20px;
+    }
+
+    select#selectEffect {
+        height: 35px;
+        width: 55px;
+        font-size: 0.75em;
+    }
+
+    button#addSampleButton {
+        height: 35px;
+        width: 60px;
+        font-size: 0.75em;
+    }
+
+    input#sampleName, input#trackTitle {
+        height: 35x;
+        margin: 1px;
+        width: 25%;
+        font-size: 0.75em;
+        padding: 0;
     }
 }

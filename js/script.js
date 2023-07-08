@@ -364,8 +364,7 @@ function addSampleToRoll() {
                 muteSample(muteButton);
             });
             icon.src = '../resources/images/icons8-mute-48.png';
-            icon.style.height = '25px';
-            icon.style.width = '25px';
+            icon.classList.add('controlIcon');
             muteButton.appendChild(icon);
             currentValue.appendChild(muteButton);
         }
@@ -378,8 +377,7 @@ function addSampleToRoll() {
                 deleteSample(deleteButton);
             });
             icon.src = '../resources/images/icons8-delete-30.png';
-            icon.style.height = '25px';
-            icon.style.width = '25px';
+            icon.classList.add('controlIcon');
             deleteButton.appendChild(icon);
             currentValue.appendChild(deleteButton);
         }
