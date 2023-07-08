@@ -93,7 +93,7 @@ function configureWavesurfer() {
             end: wavesurfer.getDuration(),
             color: "rgba(184, 134, 11, 0.25)",
             resize: true,
-            drag: true  
+            drag: true
         });
     });
 
@@ -437,7 +437,6 @@ function playTrack() {
     let noteIndex;
     let currentSample;
     let currentBeat;
-    
 
     scheduleIds.push(Tone.Transport.scheduleRepeat((time) => {
         if(curNote > 15) {

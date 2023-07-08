@@ -276,7 +276,6 @@ input[type="text"] {
 @media (max-width: 950px) {
     div#samplerContainer, div#playerContainer {
         width: 95%;
-        left: 2.5%;
     }
 
     input#sampleName, input#trackTitle {
@@ -293,20 +292,19 @@ input[type="text"] {
         width: 100%;
     }
 
-    div.seq-column {
-        width: 5%;
-    }
-
     button.seq-note {
-        width: 100%;
         border: 1px solid gray;
+        height: 30px;
+        width: 30px;
     }
-}
 
-@media (max-width: 750px) {
-    #effectsControl {
-        flex-direction: column;
-        max-height: 300px;
-        overflow-y: scroll;
+    div.seq-column span {
+        width: 150px;
+        height: 30px;
+    }
+
+    button.muteSample, button.deleteSample {
+        width: 30px;
+        height: 30px;
     }
 }
