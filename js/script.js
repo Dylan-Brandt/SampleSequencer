@@ -1,5 +1,5 @@
-import WaveSurfer from 'https://unpkg.com/wavesurfer.js@beta';
-import RegionsPlugin from 'https://unpkg.com/wavesurfer.js@beta/dist/plugins/regions.js';
+import WaveSurfer from 'https://unpkg.com/wavesurfer.js@7.0.0-beta.11/dist/wavesurfer.js';
+import RegionsPlugin from 'https://unpkg.com/wavesurfer.js@7.0.0-beta.11/dist/plugins/regions.js';
 import audiobufferToWav from 'https://cdn.jsdelivr.net/npm/audiobuffer-to-wav@1.0.0/+esm';
 import * as Tone from 'https://cdn.jsdelivr.net/npm/tone@14.7.77/+esm';
 
@@ -13,71 +13,131 @@ window.onload = () => {
     const addSampleButton = document.getElementById('addSampleButton');
     const playTrackButton = document.getElementById('playTrackButton');
     const stopTrackButton = document.getElementById('stopTrackButton');
+    const selectEffect = document.getElementById('selectEffect');
+    const closeEffectButtons = document.getElementsByClassName('closeEffect');
     const downloadTrackButton = document.getElementById('downloadTrackButton');
     const trackBPM = document.getElementById('trackBPM');
+    const sampleGain = document.getElementById('sampleGain');
+    const sampleDistortion = document.getElementById('sampleDistortion');
+    const delayTime = document.getElementById('delayTime');
+    const delayFeedback = document.getElementById('delayFeedback');
+    const delayAmount = document.getElementById('delayAmount');
+    const reverbDecay = document.getElementById('reverbDecay');
+    const reverbPreDelay = document.getElementById('reverbPreDelay');
+    const reverbAmount = document.getElementById('reverbAmount');
 
-    // Add event listeners to the buttons
+    // Add event listeners
     uploadSampleButton.addEventListener('click', uploadSample);
-    recordSampleButton.addEventListener('click', startRecording);
-    stopSampleButton.addEventListener('click', stopRecording);
+    recordSampleButton.addEventListener('click', record);
+    stopSampleButton.addEventListener('click', stopSamplePlay);
     playSampleButton.addEventListener('click', playRecording);
     downloadSampleButton.addEventListener('click', downloadRegion);
     addSampleButton.addEventListener('click', addSampleToRoll);
     playTrackButton.addEventListener('click', playTrack);
     stopTrackButton.addEventListener('click', stopTrack);
+    selectEffect.addEventListener('change', openEffectControl);
+    Array.from(closeEffectButtons).forEach((element) => {
+        element.addEventListener('click', closeEffectControl)
+    })
     trackBPM.addEventListener('change', updateBPM);
     downloadTrackButton.addEventListener('click', downloadTrack);
+    sampleGain.addEventListener('change', updateEffects);
+    sampleGain.addEventListener('change', setGainVal);
+    sampleDistortion.addEventListener('change', updateEffects);
+    sampleDistortion.addEventListener('change', setDistortionVal);
+    delayTime.addEventListener('change', updateEffects);
+    delayTime.addEventListener('change', setDelayTimeVal);
+    delayFeedback.addEventListener('change', updateEffects);
+    delayFeedback.addEventListener('change', setDelayFeedbackVal);
+    delayAmount.addEventListener('change', updateEffects);
+    delayAmount.addEventListener('change', setDelayAmountVal);
+    reverbDecay.addEventListener('change', updateEffects);
+    reverbDecay.addEventListener('change', setReverbDecayVal);
+    reverbPreDelay.addEventListener('change', updateEffects);
+    reverbPreDelay.addEventListener('change', setReverbPreDelayVal);
+    reverbAmount.addEventListener('change', updateEffects);
+    reverbAmount.addEventListener('change', setReverbAmountVal);
+
+    configureWavesurfer();
 }
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+audioCtx.resume();
 let region;
 let mediaRecorder;
+let samplerBuffer = new Tone.ToneAudioBuffer();
+let wavesurfer;
+let wsRegions;
 
-const wavesurfer = WaveSurfer.create({
-    container: '#waveform',
-    scrollParent: true,
-    normalize: true,
-    waveColor: 'white',
-    sampleRate: audioCtx.sampleRate
-});
-const wsRegions = wavesurfer.registerPlugin(RegionsPlugin.create());
+// Set up wavesurfer instance
+function configureWavesurfer() {
+    wavesurfer = WaveSurfer.create({
+        container: '#waveform',
+        scrollParent: true,
+        waveColor: 'white',
+        normalize: true,
+        sampleRate: audioCtx.sampleRate
+    });
 
-wsRegions.on('region-clicked', (region, e) => {
-    e.stopPropagation();
-    region.play();
-    wavesurfer.on('audioprocess', autoStopRegionPlay);
-});
+    wsRegions = wavesurfer.registerPlugin(RegionsPlugin.create());
+    wsRegions.on('region-clicked', (region, e) => {
+        e.stopPropagation();
+        region.play();
+        wavesurfer.on('audioprocess', autoStopRegionPlay);
+    });
+
+    wavesurfer.on('ready', () => {
+        wsRegions.clearRegions();
+        region = wsRegions.addRegion({
+            start: 0,
+            end: wavesurfer.getDuration(),
+            color: "rgba(184, 134, 11, 0.25)",
+            resize: true,
+            drag: true
+        });
+    });
+
+    wavesurfer.on('finish', () => {
+        playSampleButton.style.backgroundColor = 'lightgray';
+    });
+}
+
+// Reset wavesurfer and clear cache
+function resetWavesurfer() {
+    wavesurfer.destroy();
+    wavesurfer = null;
+    configureWavesurfer();
+}
 
 function uploadSample() {
-    // Create an input element of type "file"
+    // Clear cache and reset effects
+    resetWavesurfer();
+    resetEffectLevels();
+
+    // Select file
     let fileInput = document.createElement('input');
     fileInput.type = 'file';
-
-    // Trigger click event on the file input
     fileInput.click();
 
     // Listen for file selection
-    fileInput.addEventListener('change', function(event) {
+    fileInput.addEventListener('change', (event) => {
         let file = event.target.files[0];
-        
         // Check if the file is of type .wav or .mp3
-        if (file.type === 'audio/wav' || file.type === 'audio/mp3' || file.type === 'audio/webm') {
+        if (file.type === 'audio/wav' || file.type === 'audio/mpeg' || file.type === 'audio/webm') {
             // Use the Wavesurfer.js load method to load the file
-            wsRegions.clearRegions();
-            wavesurfer.load(URL.createObjectURL(file)).then(() => {
-                region = wsRegions.addRegion({
-                    start: wavesurfer.getDuration() * 0.1,
-                    end: wavesurfer.getDuration() * 0.8,
-                    color: "rgba(184, 134, 11, 0.25)"
-                });
+            let url = URL.createObjectURL(file);
+            samplerBuffer.load(url);
+            setAllEffectValues();
+            wavesurfer.load(url).then(() => {
                 document.getElementById('sampleName').value = file.name.replace(/\.[^/.]+$/, "");
-                stopSampleButton.disabled = true;
+                stopSampleButton.disabled = false;
                 playSampleButton.disabled = false;
                 recordSampleButton.disabled = false;
                 downloadSampleButton.disabled = false;
                 addSampleButton.disabled = false;
+                selectEffect.disabled = false;
             });
-            
+            URL.revokeObjectURL(url);
         } 
         else {
             // Alert the user if the file type is not supported
@@ -87,10 +147,24 @@ function uploadSample() {
 }
 
 // Function to handle start button click
-function startRecording() {
+function record() {
+    if(recordSampleButton.getAttribute('recording') != null) {
+        mediaRecorder.stop();
+
+        stopSampleButton.disabled = false;
+        downloadSampleButton.disabled = false;
+        addSampleButton.disabled = false;
+        selectEffect.disabled = false;
+        recordSampleButton.removeAttribute('recording', '');
+        recordSampleButton.style.backgroundColor = 'lightgray';
+        return;
+    }
+
+    resetWavesurfer();
+    resetEffectLevels();
     let chunks = [];
-    let trackDuration;
     const startTime = Date.now();
+    recordSampleButton.setAttribute('recording', '');
     
     navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(function(stream) {
         // Create a new MediaRecorder instance with the stream
@@ -101,65 +175,52 @@ function startRecording() {
             chunks.push(e.data);
         };
 
-        // Clear current region
-        wsRegions.clearRegions();
-
         mediaRecorder.onstop = function() {
             // Convert the recorded chunks into a single Blob
             const recordedBlob = new Blob(chunks, { type: 'audio/webm' });
 
             // Get the length of the audio clip
             const endTime = Date.now();
-            trackDuration = Math.abs(endTime - startTime) / 1000;
 
-            // Set the audio element's source to the recorded audio
-            wavesurfer.load(URL.createObjectURL(recordedBlob)).then(() => {
-                region = wsRegions.addRegion({
-                    start: trackDuration * 0.1,
-                    end: trackDuration * 0.8,
-                    color: "rgba(184, 134, 11, 0.25)"
-                });
-            });
+            // Send recording to wavesurfer and buffer
+            let url = URL.createObjectURL(recordedBlob);
+            samplerBuffer.load(url);
+            wavesurfer.load(url);
+            URL.revokeObjectURL(url);
 
-            // Enable the play button
+            // Enable the play button and display effect editor
             playSampleButton.disabled = false;
-
-            // Clear the chunks array
-            chunks = [];
+            document.getElementById('sampleName').value = '';
+            setAllEffectValues();
         };
 
     // Start recording
     mediaRecorder.start();
-
-    // Disable start button and enable stop button
-    recordSampleButton.disabled = true;
-    stopSampleButton.disabled = false;
+    
+    recordSampleButton.style.backgroundColor = 'gray';
+    playSampleButton.disabled = true;
+    stopSampleButton.disabled = true;
     downloadSampleButton.disabled = true;
     addSampleButton.disabled = true;
-    })
-    .catch(function(err) {
+    selectEffect.disabled = true;
+    }).catch(function(err) {
     console.error('Error accessing the microphone: ', err);
     });
 }
 
 // Function to handle stop button click
-function stopRecording() {
-    // Stop recording
-    mediaRecorder.stop();
-
-    // Disable stop button and enable start button
-    stopSampleButton.disabled = true;
-    recordSampleButton.disabled = false;
-    downloadSampleButton.disabled = false;
-    addSampleButton.disabled = false;
+function stopSamplePlay() {
+    wavesurfer.stop();
+    playSampleButton.style.backgroundColor = 'lightgray';
 }
 
 // Function to handle play button click
 function playRecording() {
     wavesurfer.play();
+    playSampleButton.style.backgroundColor = 'gray';
 }
 
-// Function to stop audio when trimmed audio finishes playing
+// Stop audio when trimmed clip finishes playing
 function autoStopRegionPlay() {
     if (wavesurfer.getCurrentTime() >= region.end) {
         wavesurfer.stop();
@@ -169,22 +230,14 @@ function autoStopRegionPlay() {
 
 // Create a wav encoded URL for trimmed audio clip
 function getRegionURL() {
-    // Get the selected region's start and end times
-    const startTime = region.start;
-    const endTime = region.end;
-
     let sourceBuffer = wavesurfer.getDecodedData();
-    let destinationBuffer = audioCtx.createBuffer(1, Math.round(audioCtx.sampleRate * (endTime - startTime)), audioCtx.sampleRate);
+    let destinationBuffer = audioCtx.createBuffer(1, Math.round(audioCtx.sampleRate * (region.end - region.start)), audioCtx.sampleRate);
 
-    sourceBuffer.copyFromChannel(destinationBuffer.getChannelData(0), 0, sourceBuffer.sampleRate * startTime);
-
-    // Create a new WAV file from the destination buffer
+    sourceBuffer.copyFromChannel(destinationBuffer.getChannelData(0), 0, sourceBuffer.sampleRate * region.start);
     let wavFile = audiobufferToWav(destinationBuffer);
-
     let blob = new window.Blob([ new DataView(wavFile) ], {
         type: 'audio/wav'
     });
-
     return window.URL.createObjectURL(blob);
 }
 
@@ -198,34 +251,96 @@ function downloadRegion() {
     window.URL.revokeObjectURL(url);
 }
 
-// Setup the transport
-Tone.Transport.set({
-    bpm: 120,
-    loop: true,
-    loopStart: 0,
-    loopEnd: "4m",
-    timeSignature: 4
-});
-
-let samples = []; // Array of trimmed audio clips
-let sampleBuffers = [];
-let scheduleIds = [];
-
-// Toggle a note in the sequencer
-function toggleNote(button) {
-    if(button.getAttribute('active') === null) {
-        button.setAttribute('active', '');
-        button.style.backgroundColor = 'black';
-    }
-    else {
-        button.removeAttribute('active', '');
-        button.style.backgroundColor = 'white';
-    };
+function openEffectControl() {
+    selectEffect.disabled = true;
+    let effectContainer = document.getElementById(selectEffect.value + 'Control');
+    effectContainer.style.display = 'flex';
 }
 
-let seqColumns;
-let seqNotes;
-let numSamples;
+function closeEffectControl() {
+    selectEffect.disabled = false;
+    document.getElementById(selectEffect.value + 'Control').style.display = 'none';
+    selectEffect.value = 'placeholder';
+}
+
+// Listener for slider change on Tone.js effects for samples
+function updateEffects() {
+    let regionStart = region.start;
+    let regionEnd = region.end;
+    resetWavesurfer(); // Clear cache
+
+    // Render effects using offline context
+    Tone.Offline((context) => {
+        let player = new Tone.Player(samplerBuffer);
+        player.volume.value = Number(sampleGain.value);
+        let distortion = new Tone.Distortion(Number(sampleDistortion.value));
+        let delay = new Tone.FeedbackDelay();
+        delay.set({
+            delayTime: Number(delayTime.value),
+            feedback: Number(delayFeedback.value),
+            wet: Number(delayAmount.value)
+        });
+        let reverb = new Tone.Reverb();
+        reverb.set({
+            decay: Number(reverbDecay.value),
+            preDelay: Number(reverbPreDelay.value),
+            wet: Number(reverbAmount.value)
+        });
+        player.chain(distortion, delay, reverb, context.destination);
+        player.start().toDestination();
+    }, samplerBuffer.duration).then((buffer) => {
+
+        let wavFile = audiobufferToWav(buffer);
+        let blob = new window.Blob([ new DataView(wavFile) ], {
+            type: 'audio/wav'
+        });
+        let url = window.URL.createObjectURL(blob);
+
+        // Load effect change into wavesurfer
+        wavesurfer.load(url).then(() => {
+            URL.revokeObjectURL(url);
+            // Preserve audio trimming
+            region.setOptions({
+                start: regionStart,
+                end: regionEnd,
+            });
+        });
+    });
+}
+
+// Functions to set the labels for each effect value 
+function setGainVal() {document.getElementById('sampleGainVal').innerHTML = Math.round(sampleGain.value).toString() + 'dB';}
+function setDistortionVal() {document.getElementById('sampleDistortionVal').innerHTML = Math.round(sampleDistortion.value * 100).toString() + '%';}
+function setReverbDecayVal() {document.getElementById('reverbDecayVal').innerHTML = Math.round(reverbDecay.value).toString() + 's';}
+function setReverbPreDelayVal() {document.getElementById('reverbPreDelayVal').innerHTML = Math.round(reverbPreDelay.value * 1000).toString() + 'ms';}
+function setReverbAmountVal() {document.getElementById('reverbAmountVal').innerHTML = Math.round(reverbAmount.value * 100).toString() + '%';}
+function setDelayTimeVal() {document.getElementById('delayTimeVal').innerHTML = (delayTime.value).toString() + 's';}
+function setDelayFeedbackVal() {document.getElementById('delayFeedbackVal').innerHTML = Math.round(delayFeedback.value * 100).toString() + '%';}
+function setDelayAmountVal() {document.getElementById('delayAmountVal').innerHTML = Math.round(delayAmount.value * 100).toString() + '%';}
+
+// Set all values
+function setAllEffectValues() {
+    setGainVal();
+    setDistortionVal();
+    setReverbDecayVal();
+    setReverbPreDelayVal();
+    setReverbAmountVal();
+    setDelayTimeVal();
+    setDelayFeedbackVal();
+    setDelayAmountVal();
+}
+
+// Set default values
+function resetEffectLevels() {
+    sampleGain.value = 0;
+    sampleDistortion.value = 0;
+    reverbDecay.value = 1.5;
+    reverbPreDelay.value = 0.01;
+    reverbAmount.value = 0;
+    delayTime.value = 0.2;
+    delayFeedback.value = 0;
+    delayAmount.value = 0;
+}
 
 // Add trimmed audio clip to sequencer roll
 function addSampleToRoll() {
@@ -280,14 +395,42 @@ function addSampleToRoll() {
         }
     });
 
-    samples.push(new Tone.Player(getRegionURL()).toDestination());
-    sampleBuffers.push(new Tone.ToneAudioBuffer(getRegionURL()));
-
+    let url = getRegionURL();
+    samples.push(new Tone.Player(url).toDestination());
+    sampleBuffers.push(new Tone.ToneAudioBuffer(url));
+    URL.revokeObjectURL(url);
     seqNotes = document.querySelectorAll('.seq-note');
     numSamples = seqNotes.length / 16;
 }
 
-let curNote = 0;
+let samples = []; // Array of samples as Tone.js Players
+let sampleBuffers = []; // Array of samples as ToneAudioBuffers
+let scheduleIds = []; // IDs for sequencer events
+let seqColumns; // Columns of the sequencer
+let seqNotes; // Sequencer notes
+let numSamples; // Number of samples
+let curNote = 0; // Current note when sequencer is playing
+
+// Setup the transport
+Tone.Transport.set({
+    bpm: 120,
+    loop: true,
+    loopStart: 0,
+    loopEnd: "4m",
+    timeSignature: 4
+});
+
+// Toggle a note in the sequencer
+function toggleNote(button) {
+    if(button.getAttribute('active') === null) {
+        button.setAttribute('active', '');
+        button.style.backgroundColor = 'black';
+    }
+    else {
+        button.removeAttribute('active', '');
+        button.style.backgroundColor = 'white';
+    };
+}
 
 // Function to schedule and play active notes
 function playTrack() {
@@ -315,9 +458,10 @@ function playTrack() {
             }
         }
         curNote++;
-    }, '4n'));
+    }, '16n'));
     Tone.start();
     Tone.Transport.start();
+    playTrackButton.style.backgroundColor = 'gray';
     playTrackButton.disabled = true;
     stopTrackButton.disabled = false;
 }
@@ -332,14 +476,15 @@ function stopTrack() {
     curNote = 0;
     seqColumns.forEach((element) => {
         element.style['background-color'] = 'gray';
-    })
+    });
+    playTrackButton.style.backgroundColor = 'lightgray';
     playTrackButton.disabled = false;
     stopTrackButton.disabled = true;
 }
 
 // Update transport BPM when value changes
 function updateBPM() {
-    Tone.Transport.bpm.value = document.getElementById('trackBPM').value;
+    Tone.Transport.bpm.value = trackBPM.value;
 }
 
 // Remove a sample and its row from the sequencer
@@ -421,12 +566,12 @@ function downloadTrack() {
                 noteIndex = curNote * numSamples + i;
                 currentSample = noteIndex % numSamples;
                 // Play sample if it is activated
-                if(seqNotes[noteIndex].getAttribute('active') != null) {
+                if(seqNotes[noteIndex].getAttribute('active') != null && seqNotes[noteIndex].getAttribute('muted') == null) {
                     offlineSamples[currentSample].toDestination().start(time);
                 }
             }
             curNote++;
-        }, '4n');
+        }, '16n');
         // Start the transport
         transport.start();
 
