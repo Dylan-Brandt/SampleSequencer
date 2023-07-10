@@ -8,6 +8,7 @@
         <script src="js/script.js" type="module"></script>
     </head>
     <body>
+        <h2>Sampler</h1>
         <div id="samplerContainer">
             <div class="controls">
                 <input id="sampleName" placeholder="Sample Name" type="text">
@@ -23,6 +24,9 @@
                 <button id="stopSampleButton" class="controlButton" disabled>
                     <img src="resources/images/icons8-stop-30.png" class="controlIcon">
                 </button>
+            </div>
+            <div id="waveform"></div>
+            <div class="controls bottomControls">
                 <div class="sliderContainer" id="sampleGainControl" style="display: none">
                     <div class="closeEffectButtonContainer"><button class="closeEffect"><img src="resources/images/icons8-close-16.png"></button></div>
                     <label for="sampleGain">Gain</label>
@@ -88,11 +92,12 @@
                     <img src="resources/images/icons8-downloading-updates-48.png" class="controlIcon">
                 </button>
                 <button id="addSampleButton" disabled>
-                    <span>Save Sample</span>
+                    <span>Sequence</span>
                 </button>
             </div>
-            <div id="waveform"></div>
         </div>
+
+        <h2>Sequencer</h2>
         <div id="playerContainer">
             <div class="controls">
                 <input id="trackTitle" placeholder="Track Title" type="text">

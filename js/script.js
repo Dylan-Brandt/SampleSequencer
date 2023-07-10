@@ -25,10 +25,11 @@ window.onload = () => {
     const reverbDecay = document.getElementById('reverbDecay');
     const reverbPreDelay = document.getElementById('reverbPreDelay');
     const reverbAmount = document.getElementById('reverbAmount');
+    const cancelEditButton = document.getElementById('cancelEditButton');
 
     // Add event listeners
     uploadSampleButton.addEventListener('click', uploadSample);
-    recordSampleButton.addEventListener('click', record);
+    recordSampleButton.addEventListener('click', recordSample);
     stopSampleButton.addEventListener('click', stopSamplePlay);
     playSampleButton.addEventListener('click', playRecording);
     downloadSampleButton.addEventListener('click', downloadRegion);
@@ -57,20 +58,25 @@ window.onload = () => {
     reverbPreDelay.addEventListener('change', setReverbPreDelayVal);
     reverbAmount.addEventListener('change', updateEffects);
     reverbAmount.addEventListener('change', setReverbAmountVal);
+    cancelEditButton.addEventListener('click', cancelEdit);
 
     configureWavesurfer();
 }
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 audioCtx.resume();
-let region;
+let sampleRegion;
 let mediaRecorder;
 let samplerBuffer = new Tone.ToneAudioBuffer();
 let wavesurfer;
 let wsRegions;
+let editSampleIndex;
+
 
 // Set up wavesurfer instance
 function configureWavesurfer() {
+    let disableDragSelection;
+
     wavesurfer = WaveSurfer.create({
         container: '#waveform',
         scrollParent: true,
@@ -80,6 +86,11 @@ function configureWavesurfer() {
     });
 
     wsRegions = wavesurfer.registerPlugin(RegionsPlugin.create());
+    
+    wsRegions.on('region-created', (region) => {
+        sampleRegion = region;
+        disableDragSelection();
+    });
     wsRegions.on('region-clicked', (region, e) => {
         e.stopPropagation();
         region.play();
@@ -88,13 +99,20 @@ function configureWavesurfer() {
 
     wavesurfer.on('ready', () => {
         wsRegions.clearRegions();
-        region = wsRegions.addRegion({
-            start: 0,
-            end: wavesurfer.getDuration(),
-            color: "rgba(184, 134, 11, 0.25)",
+        disableDragSelection = wsRegions.enableDragSelection({
+            color: 'rgba(184, 134, 11, 0.25)',
             resize: true,
             drag: true
         });
+        if(sampleRegion) {
+            sampleRegion = wsRegions.addRegion({
+                start: sampleRegion.start,
+                end: sampleRegion.end,
+                color: "rgba(184, 134, 11, 0.25)",
+                resize: true,
+                drag: true
+            });
+        }
     });
 
     wavesurfer.on('finish', () => {
@@ -147,7 +165,7 @@ function uploadSample() {
 }
 
 // Function to handle start button click
-function record() {
+function recordSample() {
     if(recordSampleButton.getAttribute('recording') != null) {
         mediaRecorder.stop();
 
@@ -156,7 +174,7 @@ function record() {
         addSampleButton.disabled = false;
         selectEffect.disabled = false;
         recordSampleButton.removeAttribute('recording', '');
-        recordSampleButton.style.backgroundColor = 'lightgray';
+        recordSampleButton.style.backgroundColor = null;
         return;
     }
 
@@ -208,6 +226,41 @@ function record() {
     });
 }
 
+// Load a sample back into the wavesurfer for effect editing
+function editSample(label) {
+    const labels = seqColumns[0].children;
+    let row;
+    for(let i = 0; i < labels.length; i++) {
+        if(labels[i] === label) {
+            row = i;
+        }
+    };
+
+    let url = getBufferURL(sampleBuffers[row].get());
+    samplerBuffer.load(url);
+    wavesurfer.load(url);
+    URL.revokeObjectURL(url);
+    editSampleIndex = row;
+
+    recordSampleButton.disabled = true;
+    uploadSampleButton.disabled = true;
+    addSampleButton.disabled = false;
+    document.getElementById('cancelEditButton').style.display = 'flex';
+    addSampleButton.innerHTML = 'Save Changes';
+}
+
+function cancelEdit() {
+    resetWavesurfer();
+    resetEffectLevels();
+    document.getElementById('cancelEditButton').style.display = 'none';
+    addSampleButton.innerHTML = 'Sequence';
+    recordSampleButton.disabled = false;
+    uploadSampleButton.disabled = false;
+    addSampleButton.disabled = true;
+    downloadSampleButton.disabled = true;
+    selectEffect.disabled = true;
+}
+
 // Function to handle stop button click
 function stopSamplePlay() {
     wavesurfer.stop();
@@ -222,7 +275,7 @@ function playRecording() {
 
 // Stop audio when trimmed clip finishes playing
 function autoStopRegionPlay() {
-    if (wavesurfer.getCurrentTime() >= region.end) {
+    if (wavesurfer.getCurrentTime() >= sampleRegion.end) {
         wavesurfer.stop();
         wavesurfer.un('audioprocess', autoStopRegionPlay);
     }
@@ -231,10 +284,26 @@ function autoStopRegionPlay() {
 // Create a wav encoded URL for trimmed audio clip
 function getRegionURL() {
     let sourceBuffer = wavesurfer.getDecodedData();
-    let destinationBuffer = audioCtx.createBuffer(1, Math.round(audioCtx.sampleRate * (region.end - region.start)), audioCtx.sampleRate);
+    let destinationBuffer;
+    if(sampleRegion) {
+        destinationBuffer = audioCtx.createBuffer(1, Math.round(audioCtx.sampleRate * (sampleRegion.end - sampleRegion.start)), audioCtx.sampleRate);
+        sourceBuffer.copyFromChannel(destinationBuffer.getChannelData(0), 0, sourceBuffer.sampleRate * sampleRegion.start);
+    }
+    else {
+        destinationBuffer = audioCtx.createBuffer(1, Math.round(audioCtx.sampleRate * (wavesurfer.getDuration())), audioCtx.sampleRate);
+        sourceBuffer.copyFromChannel(destinationBuffer.getChannelData(0), 0);
+    } 
 
-    sourceBuffer.copyFromChannel(destinationBuffer.getChannelData(0), 0, sourceBuffer.sampleRate * region.start);
+    
     let wavFile = audiobufferToWav(destinationBuffer);
+    let blob = new window.Blob([ new DataView(wavFile) ], {
+        type: 'audio/wav'
+    });
+    return window.URL.createObjectURL(blob);
+}
+
+function getBufferURL(buffer) {
+    let wavFile = audiobufferToWav(buffer);
     let blob = new window.Blob([ new DataView(wavFile) ], {
         type: 'audio/wav'
     });
@@ -265,8 +334,6 @@ function closeEffectControl() {
 
 // Listener for slider change on Tone.js effects for samples
 function updateEffects() {
-    let regionStart = region.start;
-    let regionEnd = region.end;
     resetWavesurfer(); // Clear cache
 
     // Render effects using offline context
@@ -290,20 +357,10 @@ function updateEffects() {
         player.start().toDestination();
     }, samplerBuffer.duration).then((buffer) => {
 
-        let wavFile = audiobufferToWav(buffer);
-        let blob = new window.Blob([ new DataView(wavFile) ], {
-            type: 'audio/wav'
-        });
-        let url = window.URL.createObjectURL(blob);
-
+        let url = getBufferURL(buffer);
         // Load effect change into wavesurfer
         wavesurfer.load(url).then(() => {
             URL.revokeObjectURL(url);
-            // Preserve audio trimming
-            region.setOptions({
-                start: regionStart,
-                end: regionEnd,
-            });
         });
     });
 }
@@ -340,10 +397,24 @@ function resetEffectLevels() {
     delayTime.value = 0.2;
     delayFeedback.value = 0;
     delayAmount.value = 0;
+
+    sampleRegion = null;
 }
 
 // Add trimmed audio clip to sequencer roll
 function addSampleToRoll() {
+    if(editSampleIndex != null) {
+        let editedClip = wavesurfer.getDecodedData();
+        sampleBuffers[editSampleIndex] = new Tone.ToneAudioBuffer(editedClip);
+        samples[editSampleIndex] = new Tone.Player(editedClip).toDestination();
+        
+        recordSampleButton.disabled = true;
+        uploadSampleButton.disabled = true;
+        document.getElementById('cancelEditButton').style.display = 'none';
+        addSampleButton.innerHTML = 'Sequence';
+        editSampleIndex = null;
+        return;
+    }
     seqColumns = document.querySelectorAll('div.seq-column');
     playTrackButton.disabled = false;
     downloadTrackButton.disabled = false;
@@ -353,6 +424,9 @@ function addSampleToRoll() {
             // Sample title
             let label = document.createElement('span');
             label.innerHTML = document.getElementById('sampleName').value ? document.getElementById('sampleName').value : (samples.length + 1).toString();
+            label.addEventListener('click', () => {
+                editSample(label);
+            })
             currentValue.appendChild(label);
         }
         else if(index == seqColumns.length - 2) {
@@ -399,6 +473,8 @@ function addSampleToRoll() {
     URL.revokeObjectURL(url);
     seqNotes = document.querySelectorAll('.seq-note');
     numSamples = seqNotes.length / 16;
+
+    console.log(sampleBuffers);
 }
 
 let samples = []; // Array of samples as Tone.js Players
@@ -574,13 +650,7 @@ function downloadTrack() {
         transport.start();
 
     }, (1 / (Tone.Transport.bpm.value / 60)) * 16).then((buffer) => {
-
-        // Get the wav file from the buffer for download
-        let wavFile = audiobufferToWav(buffer.get());
-        let blob = new window.Blob([ new DataView(wavFile) ], {
-            type: 'audio/wav'
-        });
-        let url = window.URL.createObjectURL(blob);
+        let url = getBufferURL(buffer);
         let anchor = document.createElement('a');
         anchor.href = url;
         anchor.download = document.getElementById('trackTitle').value ? document.getElementById('trackTitle').value + '.wav' : 'track.wav';
