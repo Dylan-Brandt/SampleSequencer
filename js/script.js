@@ -25,7 +25,6 @@ window.onload = () => {
     const reverbDecay = document.getElementById('reverbDecay');
     const reverbPreDelay = document.getElementById('reverbPreDelay');
     const reverbAmount = document.getElementById('reverbAmount');
-    const cancelEditButton = document.getElementById('cancelEditButton');
 
     // Add event listeners
     uploadSampleButton.addEventListener('click', uploadSample);
@@ -58,7 +57,6 @@ window.onload = () => {
     reverbPreDelay.addEventListener('change', setReverbPreDelayVal);
     reverbAmount.addEventListener('change', updateEffects);
     reverbAmount.addEventListener('change', setReverbAmountVal);
-    cancelEditButton.addEventListener('click', cancelEdit);
 
     configureWavesurfer();
 }
@@ -70,7 +68,6 @@ let mediaRecorder;
 let samplerBuffer = new Tone.ToneAudioBuffer();
 let wavesurfer;
 let wsRegions;
-let editSampleIndex;
 
 
 // Set up wavesurfer instance
@@ -226,41 +223,6 @@ function recordSample() {
     });
 }
 
-// Load a sample back into the wavesurfer for effect editing
-function editSample(label) {
-    const labels = seqColumns[0].children;
-    let row;
-    for(let i = 0; i < labels.length; i++) {
-        if(labels[i] === label) {
-            row = i;
-        }
-    };
-
-    let url = getBufferURL(sampleBuffers[row].get());
-    samplerBuffer.load(url);
-    wavesurfer.load(url);
-    URL.revokeObjectURL(url);
-    editSampleIndex = row;
-
-    recordSampleButton.disabled = true;
-    uploadSampleButton.disabled = true;
-    addSampleButton.disabled = false;
-    document.getElementById('cancelEditButton').style.display = 'flex';
-    addSampleButton.innerHTML = 'Save Changes';
-}
-
-function cancelEdit() {
-    resetWavesurfer();
-    resetEffectLevels();
-    document.getElementById('cancelEditButton').style.display = 'none';
-    addSampleButton.innerHTML = 'Sequence';
-    recordSampleButton.disabled = false;
-    uploadSampleButton.disabled = false;
-    addSampleButton.disabled = true;
-    downloadSampleButton.disabled = true;
-    selectEffect.disabled = true;
-}
-
 // Function to handle stop button click
 function stopSamplePlay() {
     wavesurfer.stop();
@@ -403,18 +365,6 @@ function resetEffectLevels() {
 
 // Add trimmed audio clip to sequencer roll
 function addSampleToRoll() {
-    if(editSampleIndex != null) {
-        let editedClip = wavesurfer.getDecodedData();
-        sampleBuffers[editSampleIndex] = new Tone.ToneAudioBuffer(editedClip);
-        samples[editSampleIndex] = new Tone.Player(editedClip).toDestination();
-        
-        recordSampleButton.disabled = true;
-        uploadSampleButton.disabled = true;
-        document.getElementById('cancelEditButton').style.display = 'none';
-        addSampleButton.innerHTML = 'Sequence';
-        editSampleIndex = null;
-        return;
-    }
     seqColumns = document.querySelectorAll('div.seq-column');
     playTrackButton.disabled = false;
     downloadTrackButton.disabled = false;
@@ -424,9 +374,6 @@ function addSampleToRoll() {
             // Sample title
             let label = document.createElement('span');
             label.innerHTML = document.getElementById('sampleName').value ? document.getElementById('sampleName').value : (samples.length + 1).toString();
-            label.addEventListener('click', () => {
-                editSample(label);
-            })
             currentValue.appendChild(label);
         }
         else if(index == seqColumns.length - 2) {
@@ -473,8 +420,6 @@ function addSampleToRoll() {
     URL.revokeObjectURL(url);
     seqNotes = document.querySelectorAll('.seq-note');
     numSamples = seqNotes.length / 16;
-
-    console.log(sampleBuffers);
 }
 
 let samples = []; // Array of samples as Tone.js Players
