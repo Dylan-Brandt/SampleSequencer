@@ -52,7 +52,7 @@ input#sampleName, input#trackTitle {
     font-size: 1.2em;
 }
 
-select#selectEffect {
+select.selectEffect {
     height: 40px;
     width: 75px;
     background-color: lightgray;
@@ -62,7 +62,7 @@ select#selectEffect {
     font-size: 1.2em;
 }
 
-select#selectEffect:hover {
+select.selectEffect:hover {
     cursor: pointer;
 }
 
@@ -89,6 +89,7 @@ input#trackBPM {
     background-color: lightgray;
     margin: 1px;
     border-bottom: 4px solid gray;
+    font-family: var(--font);
 }
 
 img.controlIcon {
@@ -96,7 +97,7 @@ img.controlIcon {
     width: 25px;
 }
 
-.controlButton:hover, button#addSampleButton:hover, .deleteSample:hover, .muteSample:hover, .closeEffect {
+.controlButton:hover, button#addSampleButton:hover, .deleteSample:hover, .muteSample:hover {
     cursor: pointer;
     background-color: gray;
 }
@@ -136,7 +137,7 @@ div#effectsControl {
     margin: 0 20px;
 }
 
-#sampleGainControl, #sampleDistortionControl, #sampleDelayControl, #sampleReverbControl {
+#sampleGainControl, #sampleCompressionControl, #sampleDistortionControl, #sampleDelayControl, #sampleReverbControl {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -149,7 +150,20 @@ div#effectsControl {
     border-radius: 10px;
 }
 
-.closeEffect {
+#trackCompressionControl, #trackDistortionControl, #trackReverbControl, #trackChorusControl, #trackPhaserControl, #trackVibratoControl {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 5%;
+    z-index: 1000;
+    background-color: #484848;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.closeSampleEffect, .closeTrackEffect {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -159,6 +173,10 @@ div#effectsControl {
     background-color: #484848;
     border: none;
     border-top-right-radius: 10px;
+}
+
+.closeSampleEffect:hover, .closeTrackEffect:hover {
+    cursor: pointer;
 }
 
 .closeEffectButtonContainer {
@@ -235,9 +253,9 @@ div#rollContainer {
     justify-content: center;
     align-items: center;
     position: relative;
-    width: 40%;
     box-sizing: border-box;
     margin: 5% 0 5% 0;
+    border: 1px solid black
 }
 
 div.seq-column {
@@ -262,12 +280,13 @@ div.seq-column span {
     text-align: center;
     font-family: var(--font);
     font-size: 1.2em;
+    overflow: hidden;
 }
 
 button.seq-note {
     height: 25px;
     width: 25px;
-    background-color: white;
+    background-color: whitesmoke;
     border: none;
     margin: 2px;
 }
@@ -307,24 +326,23 @@ input[type="text"] {
         width: 10%;
     }
 
-    div#rollContainer {
-        width: 100%;
-    }
-
     button.seq-note {
         border: 1px solid gray;
         height: 28px;
         width: 28px;
+        margin: 1px
     }
 
     div.seq-column span {
         width: 150px;
         height: 28px;
+        margin: 1px;
     }
 
     button.muteSample, button.deleteSample {
         width: 28px;
         height: 28px;
+        margin: 1px;
     }
 }
 
@@ -343,23 +361,22 @@ input[type="text"] {
         width: 10%;
     }
 
-    div#rollContainer {
-        width: 100%;
-    }
-
     button.seq-note {
         border: 1px solid gray;
         height: 15px;
         width: 15px;
+        margin: 1px;
     }
 
     div.seq-column span {
         display: none;
+        margin: 1px 1px 1px 2px;
     }
 
     button.muteSample, button.deleteSample {
         width: 15px;
         height: 15px;
+        margin: 1px 2px 1px 1px;
     }
 
     .controlButton {

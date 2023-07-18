@@ -28,19 +28,35 @@
             <div id="waveform"></div>
             <div class="controls bottomControls">
                 <div class="sliderContainer" id="sampleGainControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="resources/images/icons8-close-16.png"></button></div>
                     <label for="sampleGain">Gain</label>
                     <input type="range" id="sampleGain" name="sampleGain" min="-20" max="10" step="0.01">
                     <span id="sampleGainVal"></span>
                 </div>
+                <div id="sampleCompressionControl" style="display: none">
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <span class="effectsLabel">Compressor</span>
+                    <div class="multiEffectContainer">
+                        <div class="sliderContainer">
+                            <label for="sampleThreshold">Threshold</label>
+                            <input type="range" id="sampleThreshold" name="sampleThreshold" min="-40" max="0" step="1" value="0">
+                            <span id="sampleThresholdVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="sampleRatio">Ratio</label>
+                            <input type="range" id="sampleRatio" name="sampleRatio" min="1" max="20" step="1" value="1">
+                            <span id="sampleRatioVal"></span>
+                        </div>
+                    </div>
+                </div>
                 <div class="sliderContainer" id="sampleDistortionControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="resources/images/icons8-close-16.png"></button></div>
                     <label for="sampleDistortion">Distortion</label>
                     <input type="range" id="sampleDistortion" name="sampleDistortion" min="0" max="1" step="0.01" value="0">
                     <span id="sampleDistortionVal"></span>
                 </div>
                 <div id="sampleDelayControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="resources/images/icons8-close-16.png"></button></div>
                     <span class="effectsLabel">Delay</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -61,7 +77,7 @@
                     </div>
                 </div>
                 <div id="sampleReverbControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="resources/images/icons8-close-16.png"></button></div>
                     <span class="effectsLabel">Reverb</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -81,9 +97,10 @@
                         </div>
                     </div>
                 </div>
-                <select name="selectEffect" id="selectEffect" disabled>
+                <select name="selectEffect" class="selectEffect" id="selectSampleEffect" disabled>
                     <option value="placeholder" disabled selected>Effect</option>
                     <option value="sampleGain">Gain</option>
+                    <option value="sampleCompression">Compression</option>
                     <option value="sampleDistortion">Distortion</option>
                     <option value="sampleDelay">Delay</option>
                     <option value="sampleReverb">Reverb</option>
@@ -133,6 +150,123 @@
                 <div class="seq-column"></div>
                 <div class="seq-column"></div>
                 <div class="seq-column"></div>
+            </div>
+            <div class="controls bottomControls">
+                <div id="trackCompressionControl" style="display: none">
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <span class="effectsLabel">Compressor</span>
+                    <div class="multiEffectContainer">
+                        <div class="sliderContainer">
+                            <label for="trackThreshold">Threshold</label>
+                            <input type="range" id="trackThreshold" name="trackThreshold" min="-40" max="0" step="1" value="0">
+                            <span id="trackThresholdVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="trackRatio">Ratio</label>
+                            <input type="range" id="trackRatio" name="trackRatio" min="1" max="20" step="1" value="1">
+                            <span id="trackRatioVal"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="sliderContainer" id="trackDistortionControl" style="display: none">
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <label for="trackDistortion">Distortion</label>
+                    <input type="range" id="trackDistortion" name="trackDistortion" min="0" max="1" step="0.01" value="0">
+                    <span id="trackDistortionVal"></span>
+                </div>
+                <div id="trackChorusControl" style="display: none">
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <span class="effectsLabel">Chorus</span>
+                    <div class="multiEffectContainer">
+                        <div class="sliderContainer">
+                            <label for="trackChorusFrequency">Rate</label>
+                            <input type="range" id="trackChorusFrequency" name="trackChorusFrequency" min="0.1" max="6" step="0.1" value="1.5">
+                            <span id="trackChorusFrequencyVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="trackChorusDelayTime">Delay Time</label>
+                            <input type="range" id="trackChorusDelayTime" name="trackChorusDelayTime" min="0.02" max="0.05" step="0.0001" value=".03">
+                            <span id="trackChorusDelayTimeVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="trackChorusDepth">Depth</label>
+                            <input type="range" id="trackChorusDepth" name="trackChorusDepth" min="0" max="1" step="0.01" value="0.5">
+                            <span id="trackChorusDepthVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="trackChorusAmount">Amount</label>
+                            <input type="range" id="trackChorusAmount" name="trackChorusAmount" min="0" max="1" step="0.01" value="0">
+                            <span id="trackChorusAmountVal"></span>
+                        </div>
+                    </div>
+                </div>
+                <div id="trackPhaserControl" style="display: none">
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <span class="effectsLabel">Phaser</span>
+                    <div class="multiEffectContainer">
+                        <div class="sliderContainer">
+                            <label for="trackPhaserFrequency">Frequency</label>
+                            <input type="range" id="trackPhaserFrequency" name="trackPhaserFrequency" min="0.1" max="6" step="0.1" value="0.5">
+                            <span id="trackPhaserFrequencyVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="trackPhaserAmount">Amount</label>
+                            <input type="range" id="trackPhaserAmount" name="trackPhaserAmount" min="0" max="1" step="0.01" value="0">
+                            <span id="trackPhaserAmountVal"></span>
+                        </div>
+                    </div>
+                </div>
+                <div id="trackVibratoControl" style="display: none">
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <span class="effectsLabel">Vibrato</span>
+                    <div class="multiEffectContainer">
+                        <div class="sliderContainer">
+                            <label for="trackVibratoFrequency">Frequency</label>
+                            <input type="range" id="trackVibratoFrequency" name="trackVibratoFrequency" min="0.1" max="6" step="0.1" value="0.5">
+                            <span id="trackVibratoFrequencyVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="trackVibratoDepth">Depth</label>
+                            <input type="range" id="trackVibratoDepth" name="trackVibratoDepth" min="0" max="1" step="0.01" value="0.5">
+                            <span id="trackVibratoDepthVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="trackVibratoAmount">Amount</label>
+                            <input type="range" id="trackVibratoAmount" name="trackVibratoAmount" min="0" max="1" step="0.01" value="0">
+                            <span id="trackVibratoAmountVal"></span>
+                        </div>
+                    </div>
+                </div>
+                <div id="trackReverbControl" style="display: none">
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <span class="effectsLabel">Reverb</span>
+                    <div class="multiEffectContainer">
+                        <div class="sliderContainer">
+                            <label for="trackReverbDecay">Decay</label>
+                            <input type="range" id="trackReverbDecay" name="trackReverbDecay" min="1" max="5" step="0.01" value="1.5">
+                            <span id="trackReverbDecayVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="trackReverbPreDelay">Pre Delay</label>
+                            <input type="range" id="trackReverbPreDelay" name="trackReverbPreDelay" min="0" max="0.02" step="0.0001" value="0">
+                            <span id="trackReverbPreDelayVal"></span>
+                        </div>
+                        <div class="sliderContainer">
+                            <label for="trackReverbAmount">Amount</label>
+                            <input type="range" id="trackReverbAmount" name="trackReverbAmount" min="0" max="1" step="0.01" value="0">
+                            <span id="trackReverbAmountVal"></span>
+                        </div>
+                    </div>
+                </div>
+                <select name="selectEffect" class="selectEffect" id="selectTrackEffect" disabled>
+                    <option value="placeholder" disabled selected>Effect</option>
+                    <option value="trackCompression">Compression</option>
+                    <option value="trackDistortion">Distortion</option>
+                    <option value="trackChorus">Chorus</option>
+                    <option value="trackPhaser">Phaser</option>
+                    <option value="trackVibrato">Vibrato</option>
+                    <option value="trackReverb">Reverb</option>
+                </select>
             </div>
         </div>
     </body>
