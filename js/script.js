@@ -48,6 +48,8 @@ window.onload = () => {
     const trackReverbPreDelay = document.getElementById('trackReverbPreDelay');
     const trackReverbAmount = document.getElementById('trackReverbAmount');
 
+    const patternButtons = document.getElementsByClassName('patternButton');
+
 
     // Add event listeners
     uploadSampleButton.addEventListener('click', uploadSample);
@@ -120,8 +122,18 @@ window.onload = () => {
     trackReverbAmount.addEventListener('change', setTrackEffectLevels);
     trackReverbAmount.addEventListener('change', setTrackReverbAmountVal);
 
+    Array.from(patternButtons).forEach((element) => {
+        element.addEventListener('click', () => {
+            sendPatternToRoll(element);
+        })
+    })
+
     configureWavesurfer();
 }
+
+window.onbeforeunload = function() {
+    return "Data will be lost if you leave the page, are you sure?";
+};
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 audioCtx.resume();
@@ -439,6 +451,12 @@ let seqColumns; // Columns of the sequencer
 let seqNotes; // Sequencer notes
 let numSamples; // Number of samples
 let curNote = 0; // Current note when sequencer is playing
+let patterns = new Array(4);
+for(let i = 0; i < 4; i++) {
+    patterns[i] = new Array();
+}
+let activePattern = 0;
+let patternNoteCounts = [0, 0, 0, 0];
 
 // Setup the transport
 Tone.Transport.set({
@@ -448,6 +466,27 @@ Tone.Transport.set({
     loopEnd: "4m",
     timeSignature: 4
 });
+
+let trackCompression = new Tone.Compressor();
+let trackReverb = new Tone.Reverb();
+let trackChorus = new Tone.Chorus();
+let trackPhaser = new Tone.Phaser();
+let trackVibrato = new Tone.Vibrato();
+Tone.Destination.chain(trackCompression, trackChorus, trackVibrato, trackPhaser, trackReverb);
+setTrackEffectLevels();
+
+function getEmptyPattern() {
+    let button = document.createElement('button');
+    button.className = 'seq-note';
+    let pattern = [];
+    for(let i = 0; i < 16; i++) {
+        button.noteindex = i.toString();
+        button.style.backgroundColor = 'whitesmoke';
+        pattern[i] = button.cloneNode();
+    }
+    button.remove();
+    return pattern;
+}
 
 // Add trimmed audio clip to sequencer roll
 function addSampleToRoll() {
@@ -498,6 +537,8 @@ function addSampleToRoll() {
             // Add sequence buttons
             let button = document.createElement('button');
             button.className = 'seq-note';
+            button.setAttribute('noteindex', (index - 1).toString());
+            button.style.backgroundColor = 'whitesmoke';
             button.addEventListener('click', () => {
                 toggleNote(button);
             });
@@ -513,6 +554,11 @@ function addSampleToRoll() {
     URL.revokeObjectURL(url);
     seqNotes = document.querySelectorAll('.seq-note');
     numSamples = seqNotes.length / 16;
+
+    for(let i = 0; i < 4; i++) {
+        patterns[i].push([]);
+        patterns[i][patterns[i].length - 1].push(getEmptyPattern());
+    }
 }
 
 function playSampleInRoll(label) {
@@ -528,42 +574,53 @@ function playSampleInRoll(label) {
 
 // Toggle a note in the sequencer
 function toggleNote(button) {
+    const buttons = document.querySelectorAll('[noteindex="' + button.getAttribute('noteindex') + '"]');
+    let row;
+    for(let i = 0; i < buttons.length; i++) {
+        if(buttons[i] === button) {
+            row = i;
+        }
+    };
     if(button.getAttribute('active') === null) {
         button.setAttribute('active', '');
+        patterns[activePattern][row][0][Number(button.getAttribute('noteindex'))].setAttribute('active', '');
         button.style.backgroundColor = '#303030';
+        patternNoteCounts[activePattern]++;
     }
     else {
         button.removeAttribute('active', '');
+        patterns[activePattern][row][0][Number(button.getAttribute('noteindex'))].removeAttribute('active', '');
         button.style.backgroundColor = 'whitesmoke';
+        patternNoteCounts[activePattern]--;
     };
+    patterns[activePattern];
+    patterns[activePattern][row][0][Number(button.getAttribute('noteindex'))].style.backgroundColor = button.style.backgroundColor;
 }
-
-let trackDist = new Tone.Distortion();
-let trackCompression = new Tone.Compressor();
-let trackReverb = new Tone.Reverb();
-let trackChorus = new Tone.Chorus();
-let trackPhaser = new Tone.Phaser();
-let trackVibrato = new Tone.Vibrato();
-setTrackEffectLevels();
-Tone.Destination.chain(trackCompression, trackChorus, trackVibrato, trackPhaser, trackReverb);
 
 // Function to schedule and play active notes
 function playTrack() {
     let noteIndex;
     let currentSample;
     let currentBeat;
+    sendPatternToRoll(document.getElementById('pattern0Button'));
+    disablePatternButtons();
 
     scheduleIds.push(Tone.Transport.scheduleRepeat((time) => {
         if(curNote > 15) {
+            if(patternNoteCounts[(activePattern + 1) % 4] > 0) {
+                sendPatternToRoll(document.getElementById('pattern' + ((activePattern + 1) % 4).toString() + 'Button'));
+            }
+            else {
+                sendPatternToRoll(document.getElementById('pattern0Button'));
+            }
             curNote = 0;
         }
         for(let i = 0; i < numSamples; i++) {
             noteIndex = curNote * numSamples + i;
-            currentSample = noteIndex % numSamples;
             currentBeat = Math.floor(noteIndex/numSamples);
             // // Play sample if it is activated
             if(seqNotes[noteIndex].getAttribute('active') != null && seqNotes[noteIndex].getAttribute('muted') == null) {
-                samples[currentSample].start(time);
+                samples[i].start(time);
             }
             // Visualize sequence state
             seqColumns[currentBeat].style['background-color'] = 'gray';
@@ -583,6 +640,7 @@ function playTrack() {
 
 // Stop track and remove note schedules
 function stopTrack() {
+    enablePatternButtons();
     Tone.Transport.stop();
     scheduleIds.forEach((element) => {
         Tone.Transport.clear(element);
@@ -620,6 +678,9 @@ function deleteSample(button) {
     });
     samples.splice(row, 1);
     sampleBuffers.splice(row, 1);
+    for(let i = 0; i < 4; i++) {
+        patterns[i].splice(row, 1);
+    }
     if(samples.length === 0) {
         stopTrack();
         playTrackButton.disabled = true;
@@ -656,6 +717,15 @@ function muteSample(muteButton) {
 
 // Download the sequencer track
 function downloadTrack() {
+    let numActiveBeats = 0;
+    for(let i = 0; i < 4; i++) {
+        if(patternNoteCounts > 0) {
+            numActiveBeats += 16;
+        }
+        else {
+            break;
+        }
+    }
     // Offline audio context renderings
     Tone.Offline(({ transport }) => {
 
@@ -702,21 +772,13 @@ function downloadTrack() {
         });
         Tone.getContext().destination.chain(trackCompression, trackDist, trackChorus, trackPhaser, trackVibrato, trackReverb);
 
-        let noteIndex;
-        let currentSample;
         let curNote = 0;
 
         // Loop through columns to schedule samples
         transport.scheduleRepeat((time) => {
-            if(curNote > 15) {
-                curNote = 0;
-            }
             for(let i = 0; i < numSamples; i++) {
-                noteIndex = curNote * numSamples + i;
-                currentSample = noteIndex % numSamples;
-                // Play sample if it is activated
-                if(seqNotes[noteIndex].getAttribute('active') != null && seqNotes[noteIndex].getAttribute('muted') == null) {
-                    offlineSamples[currentSample].start(time);
+                if(patterns[Math.floor(curNote / 16)][i][0][curNote % 16].getAttribute('active') != null && patterns[Math.floor(curNote / 16)][i][0][curNote % 16].getAttribute('muted') == null) {
+                    offlineSamples[i].start(time);
                 }
             }
             curNote++;
@@ -724,7 +786,7 @@ function downloadTrack() {
         // Start the transport
         transport.start();
 
-    }, (1 / (Tone.Transport.bpm.value / 60)) * 16).then((buffer) => {
+    }, (1 / (Tone.Transport.bpm.value / 60)) * 8).then((buffer) => {
         let url = getBufferURL(buffer);
         let anchor = document.createElement('a');
         anchor.href = url;
@@ -832,3 +894,37 @@ function resetTrackEffectLevels() {
     trackReverbAmount.value = 0;
 }
 
+// Send one of four stored patterns to the sequencer roll
+function sendPatternToRoll(button) {
+    document.getElementById('pattern' + activePattern.toString() + 'Button').style.backgroundColor = '';
+    activePattern = Number(button.id.replace('pattern', '').replace('Button', ''));
+    document.getElementById('pattern' + activePattern.toString() + 'Button').style.backgroundColor = 'gray';
+    let colNotes;
+    for(let col = 0; col < 16; col++) {
+        colNotes = document.querySelectorAll('[noteindex="' + col.toString() + '"]');
+        for(let row = 0; row < colNotes.length; row++) {
+            patterns[activePattern][row][0][col].setAttribute('noteindex', col.toString());
+            colNotes[row].style.backgroundColor = patterns[activePattern][row][0][col].style.backgroundColor;
+            if(patterns[activePattern][row][0][col].getAttribute('active') != null) {
+                colNotes[row].setAttribute('active', '');
+            }
+            else {
+                colNotes[row].removeAttribute('active', '');
+            }
+        }
+    }
+}
+
+function disablePatternButtons() {
+    document.getElementById('pattern0Button').disabled = 'true';
+    document.getElementById('pattern1Button').disabled = 'true';
+    document.getElementById('pattern2Button').disabled = 'true';
+    document.getElementById('pattern3Button').disabled = 'true';
+}
+
+function enablePatternButtons() {
+    document.getElementById('pattern0Button').removeAttribute('disabled', '');
+    document.getElementById('pattern1Button').removeAttribute('disabled', '');
+    document.getElementById('pattern2Button').removeAttribute('disabled', '');
+    document.getElementById('pattern3Button').removeAttribute('disabled', '');
+}
