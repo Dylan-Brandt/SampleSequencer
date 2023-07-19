@@ -168,11 +168,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="sliderContainer" id="trackDistortionControl" style="display: none">
+                <div class="sliderContainer" id="trackGainControl" style="display: none">
                     <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
-                    <label for="trackDistortion">Distortion</label>
-                    <input type="range" id="trackDistortion" name="trackDistortion" min="0" max="1" step="0.01" value="0">
-                    <span id="trackDistortionVal"></span>
+                    <label for="trackGain">Gain</label>
+                    <input type="range" id="trackGain" name="trackGain" min="-60" max="15" step="1" value="0">
+                    <span id="trackGainVal"></span>
                 </div>
                 <div id="trackChorusControl" style="display: none">
                     <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
@@ -261,7 +261,7 @@
                 <select name="selectEffect" class="selectEffect" id="selectTrackEffect" disabled>
                     <option value="placeholder" disabled selected>Effect</option>
                     <option value="trackCompression">Compression</option>
-                    <option value="trackDistortion">Distortion</option>
+                    <option value="trackGain">Gain</option>
                     <option value="trackChorus">Chorus</option>
                     <option value="trackPhaser">Phaser</option>
                     <option value="trackVibrato">Vibrato</option>

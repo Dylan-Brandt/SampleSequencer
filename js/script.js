@@ -34,7 +34,7 @@ window.onload = () => {
     const closeTrackEffectButtons = document.getElementsByClassName('closeTrackEffect');
     const trackThreshold = document.getElementById('trackThreshold');
     const trackRatio = document.getElementById('trackRatio');
-    const trackDistortion = document.getElementById('trackDistortion');
+    const trackGain = document.getElementById('trackGain');
     const trackChorusFrequency = document.getElementById('trackChorusFrequency');
     const trackChorusDelayTime = document.getElementById('trackChorusDelayTime');
     const trackChorusDepth = document.getElementById('trackChorusDepth');
@@ -53,7 +53,7 @@ window.onload = () => {
     uploadSampleButton.addEventListener('click', uploadSample);
     recordSampleButton.addEventListener('click', recordSample);
     stopSampleButton.addEventListener('click', stopSamplePlay);
-    playSampleButton.addEventListener('click', playRecording);
+    playSampleButton.addEventListener('click', playSample);
     downloadSampleButton.addEventListener('click', downloadRegion);
     addSampleButton.addEventListener('click', addSampleToRoll);
 
@@ -93,8 +93,8 @@ window.onload = () => {
     })
     trackThreshold.addEventListener('change', setTrackThresholdVal);
     trackRatio.addEventListener('change', setTrackRatioVal);
-    trackDistortion.addEventListener('change', setTrackEffectLevels);
-    trackDistortion.addEventListener('change', setTrackDistortionVal);
+    trackGain.addEventListener('change', setTrackEffectLevels);
+    trackGain.addEventListener('change', setTrackGainVal);
     trackChorusFrequency.addEventListener('change', setTrackEffectLevels);
     trackChorusFrequency.addEventListener('change', setTrackChorusFrequencyVal);
     trackChorusDelayTime.addEventListener('change', setTrackEffectLevels);
@@ -175,7 +175,7 @@ function configureWavesurfer() {
     });
 
     wavesurfer.on('finish', () => {
-        playSampleButton.style.backgroundColor = 'lightgray';
+        playSampleButton.style.backgroundColor = '';
     });
 }
 
@@ -288,11 +288,11 @@ function recordSample() {
 // Function to handle stop button click
 function stopSamplePlay() {
     wavesurfer.stop();
-    playSampleButton.style.backgroundColor = 'lightgray';
+    playSampleButton.style.backgroundColor = '';
 }
 
 // Function to handle play button click
-function playRecording() {
+function playSample() {
     wavesurfer.play();
     playSampleButton.style.backgroundColor = 'gray';
 }
@@ -461,6 +461,10 @@ function addSampleToRoll() {
         if(index == 0) {
             // Sample title
             let label = document.createElement('span');
+            label.className = 'sampleLabel';
+            label.addEventListener('click', () => {
+                playSampleInRoll(label);
+            })
             label.innerHTML = document.getElementById('sampleName').value ? document.getElementById('sampleName').value : (samples.length + 1).toString();
             currentValue.appendChild(label);
         }
@@ -511,6 +515,17 @@ function addSampleToRoll() {
     numSamples = seqNotes.length / 16;
 }
 
+function playSampleInRoll(label) {
+    const labels = document.querySelectorAll('.sampleLabel');
+    let row;
+    for(let i = 0; i < labels.length; i++) {
+        if(labels[i] === label) {
+            row = i;
+        }
+    };
+    samples[row].start();
+}
+
 // Toggle a note in the sequencer
 function toggleNote(button) {
     if(button.getAttribute('active') === null) {
@@ -530,8 +545,7 @@ let trackChorus = new Tone.Chorus();
 let trackPhaser = new Tone.Phaser();
 let trackVibrato = new Tone.Vibrato();
 setTrackEffectLevels();
-
-Tone.Destination.chain(trackCompression, trackDist, trackChorus, trackPhaser, trackVibrato, trackReverb);
+Tone.Destination.chain(trackCompression, trackChorus, trackVibrato, trackPhaser, trackReverb);
 
 // Function to schedule and play active notes
 function playTrack() {
@@ -578,7 +592,7 @@ function stopTrack() {
     seqColumns.forEach((element) => {
         element.style['background-color'] = 'gray';
     });
-    playTrackButton.style.backgroundColor = 'lightgray';
+    playTrackButton.style.backgroundColor = '';
     playTrackButton.disabled = false;
     stopTrackButton.disabled = true;
 }
@@ -663,9 +677,6 @@ function downloadTrack() {
             threshold: Number(trackThreshold.value),
             ratio: Number(trackRatio.value)
         });
-        trackDist.set({
-            distortion: trackDistortion.value
-        });
         trackChorus.set({
             frequency: Number(trackChorusFrequency.value),
             delayTime: Number(trackChorusDelayTime.value),
@@ -741,9 +752,7 @@ function setTrackEffectLevels() {
         threshold: Number(trackThreshold.value),
         ratio: Number(trackRatio.value)
     });
-    trackDist.set({
-        distortion: trackDistortion.value
-    });
+    Tone.Destination.volume.value = trackGain.value;
     trackChorus.set({
         frequency: Number(trackChorusFrequency.value),
         delayTime: Number(trackChorusDelayTime.value),
@@ -771,7 +780,7 @@ function setTrackEffectLevels() {
 
 function setTrackThresholdVal() {document.getElementById('trackThresholdVal').innerHTML = Math.round(trackThreshold.value).toString() + 'dB';}
 function setTrackRatioVal() {document.getElementById('trackRatioVal').innerHTML = Math.round(trackRatio.value).toString() + ':1';}
-function setTrackDistortionVal() {document.getElementById('trackDistortionVal').innerHTML = Math.round(trackDistortion.value * 100).toString() + '%';}
+function setTrackGainVal() {document.getElementById('trackGainVal').innerHTML = Math.round(trackGain.value).toString() + 'dB';}
 function setTrackChorusFrequencyVal() {document.getElementById('trackChorusFrequencyVal').innerHTML = (trackChorusFrequency.value).toString() + 'Hz';}
 function setTrackChorusDelayTimeVal() {document.getElementById('trackChorusDelayTimeVal').innerHTML = Math.round(trackChorusDelayTime.value * 100).toString() + 'ms';}
 function setTrackChorusDepthVal() {document.getElementById('trackChorusDepthVal').innerHTML = Math.round(trackChorusDepth.value * 100).toString() + '%';}
@@ -789,7 +798,7 @@ function setTrackReverbAmountVal() {document.getElementById('trackReverbAmountVa
 function setAllTrackEffectValues() {
     setTrackThresholdVal();
     setTrackRatioVal();
-    setTrackDistortionVal();
+    setTrackGainVal();
     setTrackChorusFrequencyVal();
     setTrackChorusDelayTimeVal();
     setTrackChorusDepthVal();
@@ -808,7 +817,7 @@ function setAllTrackEffectValues() {
 function resetTrackEffectLevels() {
     trackThreshold.value = 0;
     trackRatio.value = 1;
-    trackDistortion.value = 0;
+    trackGain.value = 0;
     trackChorusFrequency.value = 1.5;
     trackChorusDelayTime.value = 0.03;
     trackChorusDepth.value = 0.5;

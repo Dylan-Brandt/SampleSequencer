@@ -10,6 +10,7 @@ body {
 h2 {
     font-family: var(--font);
     margin-bottom: 2%;
+    user-select: none;
 }
 
 div#samplerContainer {
@@ -150,7 +151,7 @@ div#effectsControl {
     border-radius: 10px;
 }
 
-#trackCompressionControl, #trackDistortionControl, #trackReverbControl, #trackChorusControl, #trackPhaserControl, #trackVibratoControl {
+#trackCompressionControl, #trackGainControl, #trackReverbControl, #trackChorusControl, #trackPhaserControl, #trackVibratoControl {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -268,7 +269,7 @@ div.seq-column {
     padding: 2px 0 2px 0;
 }
 
-div.seq-column span {
+span.sampleLabel {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -281,6 +282,12 @@ div.seq-column span {
     font-family: var(--font);
     font-size: 1.2em;
     overflow: hidden;
+    user-select: none;
+}
+
+span.sampleLabel:hover {
+    cursor: pointer;
+    background-color: #484848;
 }
 
 button.seq-note {
@@ -390,7 +397,6 @@ input[type="text"] {
     }
 
     select#selectEffect {
-        height: 35px;
         width: 55px;
         font-size: 0.75em;
     }
@@ -402,7 +408,7 @@ input[type="text"] {
     }
 
     input#sampleName, input#trackTitle {
-        height: 35x;
+        height: 35px;
         margin: 1px;
         width: 25%;
         font-size: 0.75em;
