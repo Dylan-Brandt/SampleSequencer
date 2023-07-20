@@ -757,8 +757,8 @@ function deleteSample(button) {
         // }
         element.childNodes[row].remove();
     });
-    samples.splice(row, 1);
-    sampleBuffers.splice(row, 1);
+    samples.splice(row - 1, 1);
+    sampleBuffers.splice(row - 1, 1);
     for(let i = 0; i < 4; i++) {
         patterns[i].splice(row - 1, 1);
     }
