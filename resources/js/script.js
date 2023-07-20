@@ -800,7 +800,7 @@ function muteSample(muteButton) {
 function downloadTrack() {
     let numActiveBeats = 0;
     for(let i = 0; i < 4; i++) {
-        if(patternNoteCounts > 0) {
+        if(patternNoteCounts[i] > 0) {
             numActiveBeats += 16;
         }
         else {
@@ -818,12 +818,12 @@ function downloadTrack() {
         for(let i = 0; i < sampleBuffers.length; i++) {
             offlineSamples.push(new Tone.Player(sampleBuffers[i]).toDestination());
         }
-        let trackDist = new Tone.Distortion();
         let trackCompression = new Tone.Compressor();
         let trackReverb = new Tone.Reverb();
         let trackChorus = new Tone.Chorus();
         let trackPhaser = new Tone.Phaser();
         let trackVibrato = new Tone.Vibrato();
+        Tone.getContext().destination.volume.value = trackGain.value;
         trackCompression.set({
             threshold: Number(trackThreshold.value),
             ratio: Number(trackRatio.value)
@@ -851,7 +851,7 @@ function downloadTrack() {
             preDelay: Number(trackReverbPreDelay.value),
             wet: Number(trackReverbAmount.value)
         });
-        Tone.getContext().destination.chain(trackCompression, trackDist, trackChorus, trackPhaser, trackVibrato, trackReverb);
+        Tone.getContext().destination.chain(trackCompression, trackChorus, trackPhaser, trackVibrato, trackReverb);
 
         let curNote = 0;
 
@@ -867,7 +867,7 @@ function downloadTrack() {
         // Start the transport
         transport.start();
 
-    }, (1 / (Tone.Transport.bpm.value / 60)) * 8).then((buffer) => {
+    }, (1 / (Tone.Transport.bpm.value / 60)) * numActiveBeats/4).then((buffer) => {
         let url = getBufferURL(buffer);
         let anchor = document.createElement('a');
         anchor.href = url;

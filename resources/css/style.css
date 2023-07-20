@@ -152,7 +152,7 @@ div#effectsControl {
     justify-content: center;
     align-items: center;
     position: absolute;
-    top: 5%;
+    top: 20%;
     z-index: 1000;
     background-color: #484848;
     border: 1px solid black;
@@ -169,7 +169,7 @@ div#effectsControl {
     justify-content: center;
     align-items: center;
     position: absolute;
-    top: 5%;
+    top: 30%;
     z-index: 1000;
     background-color: #484848;
     border: 1px solid black;
