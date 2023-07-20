@@ -53,7 +53,7 @@ input#sampleName, input#trackTitle {
     font-size: 1.2em;
 }
 
-select.selectEffect {
+select.selectEffect, select.selectMenu {
     height: 40px;
     width: 75px;
     background-color: lightgray;
@@ -63,8 +63,12 @@ select.selectEffect {
     font-size: 1.2em;
 }
 
-select.selectEffect:hover {
+select.selectEffect:hover, select.selectMenu {
     cursor: pointer;
+}
+
+select.selectMenu {
+    width: 250px;
 }
 
 label {
@@ -98,12 +102,12 @@ img.controlIcon {
     width: 25px;
 }
 
-.controlButton:hover, button#addSampleButton:hover, .deleteSample:hover, .muteSample:hover {
+.controlButton:hover, button#addSampleButton:hover, .deleteSample:hover, .muteSample:hover, #openLoadSampleMenuButton:hover, .menuButton:hover {
     cursor: pointer;
     background-color: gray;
 }
 
-button#addSampleButton {
+button#addSampleButton, button#openLoadSampleMenuButton, .menuButton {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -116,6 +120,10 @@ button#addSampleButton {
     font-family: var(--font);
     font-size: 1.2em;
     border-bottom: 4px solid gray;
+}
+
+button#openLoadSampleMenuButton, .menuButton {
+    width: 60px;
 }
 
 div#effectsControl {
@@ -138,7 +146,7 @@ div#effectsControl {
     margin: 0 20px;
 }
 
-#sampleGainControl, #sampleCompressionControl, #sampleDistortionControl, #sampleDelayControl, #sampleReverbControl {
+#sampleGainControl, #sampleCompressionControl, #sampleDistortionControl, #sampleDelayControl, #sampleReverbControl, #loadSampleMenuContainer {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -149,6 +157,10 @@ div#effectsControl {
     background-color: #484848;
     border: 1px solid black;
     border-radius: 10px;
+}
+
+#loadSampleMenuContainer {
+    padding: 0 1% 1%;
 }
 
 #trackCompressionControl, #trackGainControl, #trackReverbControl, #trackChorusControl, #trackPhaserControl, #trackVibratoControl {
@@ -164,7 +176,7 @@ div#effectsControl {
     border-radius: 10px;
 }
 
-.closeSampleEffect, .closeTrackEffect {
+.closeSampleEffect, .closeTrackEffect, .closeMenuButton {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -176,16 +188,16 @@ div#effectsControl {
     border-top-right-radius: 10px;
 }
 
-.closeSampleEffect:hover, .closeTrackEffect:hover {
+.closeSampleEffect:hover, .closeTrackEffect:hover, .closeMenuButton:hover {
     cursor: pointer;
 }
 
-.closeEffectButtonContainer {
+.closeEffectButtonContainer, .closeMenuButtonContainer {
     width: 100%;
     margin-bottom: -10px;
 }
 
-.multiEffectWrapper {
+.multiEffectWrapper, .loadMenuWrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -193,9 +205,16 @@ div#effectsControl {
     width: 33%;
 }
 
+.loadMenuButtonWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 span.effectsLabel {
     font-family: var(--font);
     font-size: 1.5em;
+    margin: 5px;
 }
 
 span {
@@ -256,7 +275,21 @@ div#rollContainer {
     position: relative;
     box-sizing: border-box;
     margin: 5% 0 5% 0;
-    border: 1px solid black
+    border: 1px solid black;
+    padding: 5px;
+    background-color: grey;
+    border-radius: 5px;
+}
+
+div.beatLabel {
+    height: 15px;
+    margin: 2px;
+    font-family: var(--font);
+}
+
+span.beatLabel {
+    height: 19px;
+    min-width: 300px;
 }
 
 div.seq-column {
@@ -267,6 +300,8 @@ div.seq-column {
     opacity: 1;
     background-color: gray;
     padding: 2px 0 2px 0;
+    min-height: 1px;
+    min-width: 29px;
 }
 
 span.sampleLabel {
@@ -342,8 +377,16 @@ input[type="text"] {
 
     div.seq-column span {
         width: 150px;
+    }
+
+    div.seq-column span.sampleLabel {
         height: 28px;
         margin: 1px;
+    }
+
+    span.beatLabel {
+        height: 19px;
+        min-width: 150px;
     }
 
     button.muteSample, button.deleteSample {
@@ -354,8 +397,30 @@ input[type="text"] {
 }
 
 @media (max-width: 800px) {
+    div.seq-column span.sampleLabel {
+        width: 75px;
+    }
+
+    span.beatLabel {
+        height: 19px;
+        min-width: 0px;
+        width: 75px;
+    }
+}
+
+@media (max-width: 725px) {
+    div.seq-column span.sampleLabel {
+        width: 28px;
+    }
+
     div.seq-column span {
-        display: none;
+        width: 28px;
+    }
+
+    span.beatLabel {
+        height: 19px;
+        min-width: 0px;
+        width: 28px;
     }
 }
 
@@ -373,6 +438,10 @@ input[type="text"] {
         height: 15px;
         width: 15px;
         margin: 1px;
+    }
+
+    div.seq-column {
+        min-width: 17px;
     }
 
     div.seq-column span {

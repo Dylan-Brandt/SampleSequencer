@@ -3,8 +3,16 @@ import RegionsPlugin from 'https://unpkg.com/wavesurfer.js@7.0.0-beta.11/dist/pl
 import audiobufferToWav from 'https://cdn.jsdelivr.net/npm/audiobuffer-to-wav@1.0.0/+esm';
 import * as Tone from 'https://cdn.jsdelivr.net/npm/tone@14.7.77/+esm';
 
+import sampleFiles from './sampleFilenames.js';
+
 // Select the necessary elements
 window.onload = () => {
+    const openLoadSampleMenuButton = document.getElementById('openLoadSampleMenuButton');
+    const selectSampleHit = document.getElementById('selectSampleHit');
+    const selectSample = document.getElementById('selectSample');
+    const playLoadedSampleButton = document.getElementById('playLoadedSampleButton');
+    const loadSampleButton = document.getElementById('loadSampleButton');
+    const closeMenuButtons = document.getElementsByClassName('closeMenuButton');
     const uploadSampleButton = document.getElementById('uploadSampleButton');
     const recordSampleButton = document.getElementById('recordSampleButton');
     const stopSampleButton = document.getElementById('stopSampleButton');
@@ -52,6 +60,16 @@ window.onload = () => {
 
 
     // Add event listeners
+    openLoadSampleMenuButton.addEventListener('click', openLoadSampleMenu);
+    selectSampleHit.addEventListener('change', getSampleHits);
+    selectSample.addEventListener('change', getSample);
+    playLoadedSampleButton.addEventListener('click', playLoadedSample);
+    loadSampleButton.addEventListener('click', loadSample);
+    Array.from(closeMenuButtons).forEach((element) => {
+        element.addEventListener('click', () => {
+            closeMenu(element);
+        })
+    })
     uploadSampleButton.addEventListener('click', uploadSample);
     recordSampleButton.addEventListener('click', recordSample);
     stopSampleButton.addEventListener('click', stopSamplePlay);
@@ -135,6 +153,7 @@ window.onbeforeunload = function() {
     return "Data will be lost if you leave the page, are you sure?";
 };
 
+const URL = 'https://10.0.0.169:3006/';
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 audioCtx.resume();
 let sampleRegion;
@@ -191,6 +210,65 @@ function configureWavesurfer() {
     });
 }
 
+function openLoadSampleMenu() {
+    document.getElementById('loadSampleMenuContainer').style.display = 'flex';
+    selectSampleHit.value = 'placeholder';
+    selectSample.value = 'placeholder';
+    selectSample.disabled = true;
+    playLoadedSampleButton.disabled = true;
+    loadSampleButton.disabled = true;
+}
+
+function getSampleHits() {
+    let options = '<option value="placeholder" disabled selected>Sample</option>';
+    sampleFiles[selectSampleHit.value].forEach((element) => {
+        options += '<option value="' + element + '">' + element + '</option>';
+    });
+    selectSample.innerHTML = options;
+    selectSample.removeAttribute('disabled', '');
+}
+
+let loadSamplePlayer = new Tone.Player().toDestination();
+let loadSampleBuffer = new Tone.ToneAudioBuffer();
+
+async function getSample() {
+    let wavFile = await fetch(URL + 'audio/' + selectSampleHit.value + '/' + selectSample.value + '.wav');
+    let blob = await wavFile.blob();
+    let url = window.URL.createObjectURL(blob);
+    loadSamplePlayer.load(url).then(() => {
+        loadSamplePlayer.start();
+        loadSampleBuffer.load(url).then(() => {
+            window.URL.revokeObjectURL(url);
+        });
+    });
+    playLoadedSampleButton.removeAttribute('disabled', '');
+    loadSampleButton.removeAttribute('disabled', '');
+}
+
+function playLoadedSample() {
+    loadSamplePlayer.start();
+}
+
+function loadSample() {
+    let url = getBufferURL(loadSampleBuffer.get());
+    samplerBuffer.load(url);
+    setAllEffectValues();
+    wavesurfer.load(url).then(() => {
+        document.getElementById('sampleName').value = selectSample.value;
+        stopSampleButton.removeAttribute('disabled', '');
+        playSampleButton.removeAttribute('disabled', '');
+        recordSampleButton.removeAttribute('disabled', '');
+        downloadSampleButton.removeAttribute('disabled', '');
+        addSampleButton.removeAttribute('disabled', '');
+        selectSampleEffect.removeAttribute('disabled', '');
+    });
+    window.URL.revokeObjectURL(url);
+}
+
+function closeMenu(menuButton) {
+    menuButton.parentElement.parentElement.style.display = 'none';
+}
+
 // Reset wavesurfer and clear cache
 function resetWavesurfer() {
     wavesurfer.destroy();
@@ -214,7 +292,7 @@ function uploadSample() {
         // Check if the file is of type .wav or .mp3
         if (file.type === 'audio/wav' || file.type === 'audio/mpeg' || file.type === 'audio/webm') {
             // Use the Wavesurfer.js load method to load the file
-            let url = URL.createObjectURL(file);
+            let url = window.URL.createObjectURL(file);
             samplerBuffer.load(url);
             setAllEffectValues();
             wavesurfer.load(url).then(() => {
@@ -226,7 +304,7 @@ function uploadSample() {
                 addSampleButton.disabled = false;
                 selectSampleEffect.disabled = false;
             });
-            URL.revokeObjectURL(url);
+            window.URL.revokeObjectURL(url);
         } 
         else {
             // Alert the user if the file type is not supported
@@ -272,10 +350,10 @@ function recordSample() {
             const endTime = Date.now();
 
             // Send recording to wavesurfer and buffer
-            let url = URL.createObjectURL(recordedBlob);
+            let url = window.URL.createObjectURL(recordedBlob);
             samplerBuffer.load(url);
             wavesurfer.load(url);
-            URL.revokeObjectURL(url);
+            window.URL.revokeObjectURL(url);
 
             // Enable the play button and display effect editor
             playSampleButton.disabled = false;
@@ -397,9 +475,10 @@ function updateEffects() {
         let url = getBufferURL(buffer);
         // Load effect change into wavesurfer
         wavesurfer.load(url).then(() => {
-            URL.revokeObjectURL(url);
+            window.URL.revokeObjectURL(url);
         });
     });
+    wavesurfer.play();
 }
 
 // Functions to set the labels for each effect value 
@@ -494,6 +573,9 @@ function addSampleToRoll() {
     playTrackButton.disabled = false;
     downloadTrackButton.disabled = false;
     selectTrackEffect.disabled = false;
+    if(document.getElementById('rollContainer').style.display == 'none') {
+        document.getElementById('rollContainer').style.display = '';
+    }
     setAllTrackEffectValues();
 
     seqColumns.forEach((currentValue, index) => {
@@ -515,7 +597,7 @@ function addSampleToRoll() {
             muteButton.addEventListener('click', () => {
                 muteSample(muteButton);
             });
-            icon.src = '../resources/images/icons8-mute-48.png';
+            icon.src = '/images/icons8-mute-48.png';
             icon.classList.add('controlIcon');
             muteButton.appendChild(icon);
             currentValue.appendChild(muteButton);
@@ -528,7 +610,7 @@ function addSampleToRoll() {
             deleteButton.addEventListener('click', () => {
                 deleteSample(deleteButton);
             });
-            icon.src = '../resources/images/icons8-delete-30.png';
+            icon.src = '/images/icons8-delete-30.png';
             icon.classList.add('controlIcon');
             deleteButton.appendChild(icon);
             currentValue.appendChild(deleteButton);
@@ -551,7 +633,7 @@ function addSampleToRoll() {
     let player = new Tone.Player(url).toDestination();
     samples.push(player);
     sampleBuffers.push(new Tone.ToneAudioBuffer(url));
-    URL.revokeObjectURL(url);
+    window.URL.revokeObjectURL(url);
     seqNotes = document.querySelectorAll('.seq-note');
     numSamples = seqNotes.length / 16;
 
@@ -600,7 +682,6 @@ function toggleNote(button) {
 // Function to schedule and play active notes
 function playTrack() {
     let noteIndex;
-    let currentSample;
     let currentBeat;
     sendPatternToRoll(document.getElementById('pattern0Button'));
     disablePatternButtons();
@@ -664,22 +745,22 @@ function updateBPM() {
 function deleteSample(button) {
     const buttons = seqColumns[seqColumns.length - 1].children;
     let row;
-    for(let i = 0; i < buttons.length; i++) {
+    for(let i = 1; i < buttons.length; i++) {
         if(buttons[i] === button) {
             row = i;
         }
     };
     seqColumns.forEach((element) => {
         button = element.childNodes[row];
-        if(button.getAttribute('active') != null) {
-            button.click();
-        }
+        // if(button.getAttribute('active') != null) {
+        //     button.click();
+        // }
         element.childNodes[row].remove();
     });
     samples.splice(row, 1);
     sampleBuffers.splice(row, 1);
     for(let i = 0; i < 4; i++) {
-        patterns[i].splice(row, 1);
+        patterns[i].splice(row - 1, 1);
     }
     if(samples.length === 0) {
         stopTrack();

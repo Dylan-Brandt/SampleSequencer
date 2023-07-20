@@ -11,30 +11,54 @@
         <h2>Sampler</h1>
         <div id="samplerContainer">
             <div class="controls">
-                <input id="sampleName" placeholder="Sample Name" type="text">
+                <button id="openLoadSampleMenuButton"><span>Load</span></button>
+                <div id="loadSampleMenuContainer" class="loadMenuContainer" style="display: none;">
+                    <div class="closeMenuButtonContainer"><button class="closeMenuButton"><img src="/images/icons8-close-16.png"></button></div>
+                    <span class="effectsLabel">Load Sample</span>
+                    <div class="loadMenuWrapper">
+                        <select name="selectSampleHit" class="selectMenu" id="selectSampleHit">
+                            <option value="placeholder" disabled selected>Hit</option>
+                            <option value="bass">Bass</option>
+                            <option value="kick">Kick</option>
+                            <option value="clap">Clap</option>
+                            <option value="snare">Snare</option>
+                            <option value="hat-closed">Hat Closed</option>
+                            <option value="hat-open">Hat Open</option>
+                            <option value="tom-high">Tom High</option>
+                            <option value="tom-low">Tom Low</option>
+                        </select>
+                        <select name="selectSample" class="selectMenu" id="selectSample" disabled>
+                            <option value="placeholder" disabled selected>Sample</option>
+                        </select>
+                        <div class="loadMenuButtonWrapper">
+                            <button class="menuButton" id="playLoadedSampleButton" disabled><span>Play</span></button>
+                            <button class="menuButton" id="loadSampleButton" disabled><span>Load</span></button>
+                        </div>
+                    </div>
+                </div>
                 <button id="uploadSampleButton" class="controlButton">
-                    <img src="resources/images/icons8-upload-48.png" class="controlIcon">
+                    <img src="/images/icons8-upload-48.png" class="controlIcon">
                 </button>
                 <button id="recordSampleButton" class="controlButton">
-                    <img src="resources/images/icons8-record-96.png" class="controlIcon">
+                    <img src="/images/icons8-record-96.png" class="controlIcon">
                 </button>
                 <button id="playSampleButton" class="controlButton" disabled>
-                    <img src="resources/images/icons8-play-button-30.png" class="controlIcon">
+                    <img src="/images/icons8-play-button-30.png" class="controlIcon">
                 </button>
                 <button id="stopSampleButton" class="controlButton" disabled>
-                    <img src="resources/images/icons8-stop-30.png" class="controlIcon">
+                    <img src="/images/icons8-stop-30.png" class="controlIcon">
                 </button>
             </div>
             <div id="waveform"></div>
             <div class="controls bottomControls">
                 <div class="sliderContainer" id="sampleGainControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png"></button></div>
                     <label for="sampleGain">Gain</label>
                     <input type="range" id="sampleGain" name="sampleGain" min="-20" max="10" step="0.01">
                     <span id="sampleGainVal"></span>
                 </div>
                 <div id="sampleCompressionControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png"></button></div>
                     <span class="effectsLabel">Compressor</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -50,13 +74,13 @@
                     </div>
                 </div>
                 <div class="sliderContainer" id="sampleDistortionControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png"></button></div>
                     <label for="sampleDistortion">Distortion</label>
                     <input type="range" id="sampleDistortion" name="sampleDistortion" min="0" max="1" step="0.01" value="0">
                     <span id="sampleDistortionVal"></span>
                 </div>
                 <div id="sampleDelayControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png"></button></div>
                     <span class="effectsLabel">Delay</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -77,7 +101,7 @@
                     </div>
                 </div>
                 <div id="sampleReverbControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png"></button></div>
                     <span class="effectsLabel">Reverb</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -106,8 +130,9 @@
                     <option value="sampleReverb">Reverb</option>
                 </select>
                 <button id="downloadSampleButton" class="controlButton" disabled>
-                    <img src="resources/images/icons8-downloading-updates-48.png" class="controlIcon">
+                    <img src="/images/icons8-downloading-updates-48.png" class="controlIcon">
                 </button>
+                <input id="sampleName" placeholder="Sample Name" type="text">
                 <button id="addSampleButton" disabled>
                     <span>Sequence</span>
                 </button>
@@ -121,39 +146,39 @@
                 <label for="trackBPM">BPM</label>
                 <input id="trackBPM" name="trackBPM" value="120" type="text">
                 <button id="playTrackButton" class="controlButton" disabled>
-                    <img src="resources/images/icons8-play-button-30.png" class="controlIcon">
+                    <img src="/images/icons8-play-button-30.png" class="controlIcon">
                 </button>
                 <button id="stopTrackButton" class="controlButton" disabled>
-                    <img src="resources/images/icons8-stop-30.png" class="controlIcon">
+                    <img src="/images/icons8-stop-30.png" class="controlIcon">
                 </button>
                 <button id="downloadTrackButton" class="controlButton" disabled>
-                    <img src="resources/images/icons8-downloading-updates-48.png" class="controlIcon">
+                    <img src="/images/icons8-downloading-updates-48.png" class="controlIcon">
                 </button>
             </div>
             <div id="rollContainer">
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
-                <div class="seq-column"></div>
+                <div class="seq-column"><span class="beatLabel"></span></div>
+                <div class="seq-column"><div class="beatLabel">1</div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column"><div class="beatLabel">2</div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column"><div class="beatLabel">3</div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column"><div class="beatLabel">4</div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column"><div class="beatLabel"></div></div>
             </div>
             <div class="controls bottomControls">
                 <div id="trackCompressionControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png"></button></div>
                     <span class="effectsLabel">Compressor</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -169,13 +194,13 @@
                     </div>
                 </div>
                 <div class="sliderContainer" id="trackGainControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png"></button></div>
                     <label for="trackGain">Gain</label>
                     <input type="range" id="trackGain" name="trackGain" min="-60" max="15" step="1" value="0">
                     <span id="trackGainVal"></span>
                 </div>
                 <div id="trackChorusControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png"></button></div>
                     <span class="effectsLabel">Chorus</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -201,7 +226,7 @@
                     </div>
                 </div>
                 <div id="trackPhaserControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png"></button></div>
                     <span class="effectsLabel">Phaser</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -217,7 +242,7 @@
                     </div>
                 </div>
                 <div id="trackVibratoControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png"></button></div>
                     <span class="effectsLabel">Vibrato</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -238,7 +263,7 @@
                     </div>
                 </div>
                 <div id="trackReverbControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="resources/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png"></button></div>
                     <span class="effectsLabel">Reverb</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
