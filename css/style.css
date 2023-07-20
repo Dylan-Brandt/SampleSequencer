@@ -259,6 +259,17 @@ div#rollContainer {
     border: 1px solid black
 }
 
+div.beatLabel {
+    height: 15px;
+    margin: 2px;
+    font-family: var(--font);
+}
+
+span.beatLabel {
+    height: 19px;
+    min-width: 300px;
+}
+
 div.seq-column {
     display: flex;
     justify-content: center;
@@ -267,6 +278,8 @@ div.seq-column {
     opacity: 1;
     background-color: gray;
     padding: 2px 0 2px 0;
+    min-height: 1px;
+    min-width: 29px;
 }
 
 span.sampleLabel {

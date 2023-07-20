@@ -494,6 +494,9 @@ function addSampleToRoll() {
     playTrackButton.disabled = false;
     downloadTrackButton.disabled = false;
     selectTrackEffect.disabled = false;
+    if(document.getElementById('rollContainer').style.display == 'none') {
+        document.getElementById('rollContainer').style.display = '';
+    }
     setAllTrackEffectValues();
 
     seqColumns.forEach((currentValue, index) => {
