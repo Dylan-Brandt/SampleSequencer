@@ -6,7 +6,7 @@ const path = require('path');
 const app = express();
 const port = 3006;
 
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'resources')));
 app.use(express.urlencoded());
 
 const httpOptions = {
@@ -23,5 +23,5 @@ https.createServer(httpOptions, app).listen(port, '10.0.0.169', () => {
 //   });
 
 app.get('/', (req, res) => {
-    res.redirect('/index.html');
+    res.sendFile(path.join(__dirname, '/index.html'));
 });
