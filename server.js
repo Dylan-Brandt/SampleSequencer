@@ -14,7 +14,7 @@ const httpOptions = {
   key: fs.readFileSync(path.join(__dirname, 'ssl', 'key.pem'))
 };
 
-https.createServer(httpOptions, app).listen(port, 'https://ec2-18-191-39-63.us-east-2.compute.amazonaws.com', () => {
+https.createServer(httpOptions, app).listen(port, () => {
   console.log(`Listening on port ${port}`);
 })
 
