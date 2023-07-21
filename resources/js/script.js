@@ -153,7 +153,7 @@ window.onbeforeunload = function() {
     return "Data will be lost if you leave the page, are you sure?";
 };
 
-const URL = 'https://10.0.0.169:3006/';
+const URL = 'https://ec2-18-191-39-63.us-east-2.compute.amazonaws.com:3006/';
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 audioCtx.resume();
 let sampleRegion;
