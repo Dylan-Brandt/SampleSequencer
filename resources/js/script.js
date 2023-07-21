@@ -252,7 +252,9 @@ function playLoadedSample() {
 function loadSample() {
     let url = getBufferURL(loadSampleBuffer.get());
     samplerBuffer.load(url);
+    resetEffectLevels();
     setAllEffectValues();
+    resetWavesurfer();
     wavesurfer.load(url).then(() => {
         document.getElementById('sampleName').value = selectSample.value;
         stopSampleButton.removeAttribute('disabled', '');
