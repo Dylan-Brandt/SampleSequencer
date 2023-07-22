@@ -5,11 +5,14 @@
 
 body {
     background-color: darkslategrey;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 h2 {
     font-family: var(--font);
-    margin-bottom: 2%;
     user-select: none;
 }
 
@@ -17,7 +20,7 @@ div#samplerContainer {
     position: relative;
     background-color: var(--darkgray);
     width: 80%;
-    max-width: 800px;
+    max-width: 900px;
     margin-left: auto;
     margin-right: auto;
     border: 1px solid black;
@@ -46,7 +49,7 @@ div.bottomControls {
 }
 
 input#sampleName, input#trackTitle {
-    height: 35px;
+    height: 36px;
     width: 100px;
     margin: 2px;
     font-family: var(--font);
@@ -58,9 +61,11 @@ select.selectEffect, select.selectMenu {
     width: 75px;
     background-color: lightgray;
     margin: 1px;
-    border-bottom: 4px solid gray;
+    border-bottom: 4px solid black;
+    border-right: 2px solid black;
     font-family: var(--font);
     font-size: 1.2em;
+    user-select: none;
 }
 
 select.selectEffect:hover, select.selectMenu {
@@ -74,10 +79,11 @@ select.selectMenu {
 label {
     font-family: var(--font);
     font-size: 1.2em;
+    user-select: none;
 }
 
 input#trackBPM {
-    height: 35px;
+    height: 36px;
     width: 50px;
     margin: 2px;
     text-align: center;
@@ -93,13 +99,19 @@ input#trackBPM {
     width: 50px;
     background-color: lightgray;
     margin: 1px;
-    border-bottom: 4px solid gray;
+    border-bottom: 4px solid black;
+    border-right: 2px solid black;
     font-family: var(--font);
+    user-select: none;
+}
+
+button:disabled {
+    border-color: black;
 }
 
 img.controlIcon {
-    height: 25px;
-    width: 25px;
+    height: 28px;
+    width: 28px;
 }
 
 .controlButton:hover, button#addSampleButton:hover, .deleteSample:hover, .muteSample:hover, #openLoadSampleMenuButton:hover, .menuButton:hover {
@@ -119,7 +131,9 @@ button#addSampleButton, button#openLoadSampleMenuButton, .menuButton {
     color: black;
     font-family: var(--font);
     font-size: 1.2em;
-    border-bottom: 4px solid gray;
+    border-bottom: 4px solid black;
+    border-right: 2px solid black;
+    user-select: none;
 }
 
 button#openLoadSampleMenuButton, .menuButton {
@@ -154,7 +168,7 @@ div#effectsControl {
     position: absolute;
     top: 20%;
     z-index: 1000;
-    background-color: #484848;
+    background-color: dimgray;
     border: 1px solid black;
     border-radius: 10px;
 }
@@ -171,7 +185,7 @@ div#effectsControl {
     position: absolute;
     top: 30%;
     z-index: 1000;
-    background-color: #484848;
+    background-color: dimgray;
     border: 1px solid black;
     border-radius: 10px;
 }
@@ -183,7 +197,7 @@ div#effectsControl {
     float: right;
     height: 20px;
     width: 20px;
-    background-color: #484848;
+    background-color: dimgray;
     border: none;
     border-top-right-radius: 10px;
 }
@@ -285,6 +299,7 @@ div.beatLabel {
     height: 15px;
     margin: 2px;
     font-family: var(--font);
+    user-select: none;
 }
 
 span.beatLabel {
@@ -310,7 +325,6 @@ span.sampleLabel {
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    margin: 2px;
     height: 25px;
     width: 300px;
     text-align: center;
@@ -326,11 +340,13 @@ span.sampleLabel:hover {
 }
 
 button.seq-note {
-    height: 25px;
-    width: 25px;
+    height: 28px;
+    width: 28px;
     background-color: whitesmoke;
     border: none;
-    margin: 2px;
+    margin: 0.5px;
+    border: 1px solid black;
+    border-radius: 3px;
 }
 
 button.seq-note:hover {
@@ -341,11 +357,12 @@ button.deleteSample, button.muteSample {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 25px;
-    width: 25px;
+    height: 28px;
+    width: 28px;
     background-color: lightgray;
-    border: none;
-    margin: 2px;
+    border-radius: 3px;
+    margin: 0.5px;
+    border: 1px solid black;
 }
 
 input[type="text"] {
@@ -359,7 +376,6 @@ input[type="text"] {
 
     input#sampleName, input#trackTitle {
         height: 35px;
-        margin: 5px;
         width: 25%;
         font-size: 1em;
     }
@@ -369,10 +385,8 @@ input[type="text"] {
     }
 
     button.seq-note {
-        border: 1px solid gray;
         height: 28px;
         width: 28px;
-        margin: 1px
     }
 
     div.seq-column span {
@@ -381,7 +395,6 @@ input[type="text"] {
 
     div.seq-column span.sampleLabel {
         height: 28px;
-        margin: 1px;
     }
 
     span.beatLabel {
@@ -392,7 +405,6 @@ input[type="text"] {
     button.muteSample, button.deleteSample {
         width: 28px;
         height: 28px;
-        margin: 1px;
     }
 }
 
@@ -425,6 +437,10 @@ input[type="text"] {
 }
 
 @media (max-width: 500px) {
+    div.seq-column#labelColumn {
+        display: none;
+    }
+
     div#samplerContainer, div#playerContainer {
         width: 100%;
     }
@@ -433,11 +449,12 @@ input[type="text"] {
         width: 10%;
     }
 
-    button.seq-note {
-        border: 1px solid gray;
-        height: 15px;
-        width: 15px;
-        margin: 1px;
+    button.seq-note, .muteSample img.controlIcon, .deleteSample img.controlIcon {
+        border: 1px solid black;
+        height: 18px;
+        width: 18px;
+        margin: 0.5px;
+        border-radius: 3px;
     }
 
     div.seq-column {
@@ -450,8 +467,8 @@ input[type="text"] {
     }
 
     button.muteSample, button.deleteSample {
-        width: 15px;
-        height: 15px;
+        width: 17px;
+        height: 17px;
         margin: 1px 2px 1px 1px;
     }
 
@@ -465,22 +482,36 @@ input[type="text"] {
         width: 20px;
     }
 
+    .muteSample img.controlIcon, .deleteSample img.controlIcon {
+        height: 15px;
+        width: 15px;
+    }
+
     select#selectEffect {
         width: 55px;
         font-size: 0.75em;
     }
 
-    button#addSampleButton {
+    button#addSampleButton, button#openLoadSampleMenuButton {
         height: 35px;
         width: 60px;
         font-size: 0.75em;
     }
 
-    input#sampleName, input#trackTitle {
-        height: 35px;
-        margin: 1px;
-        width: 25%;
+    #selectTrackEffect.selectEffect, #selectSampleEffect.selectEffect {
+        height: 34px;
         font-size: 0.75em;
-        padding: 0;
+        width: 60px;
+    }
+
+    input#sampleName, input#trackTitle {
+        height: 30px;
+        width: 25%;
+        font-size: 1em;
+    }
+    
+    input#trackBPM {
+        height: 30px;
+        font-size: 1em;
     }
 }

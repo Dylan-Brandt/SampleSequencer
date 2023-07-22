@@ -4,10 +4,17 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const port = 3006;
+const port = 443;
 
 app.use(express.static(path.join(__dirname, 'resources')));
 app.use(express.urlencoded());
+
+app.use(function(req, res, next) {
+  if(!req.secure) {
+    return res.redirect(['https://', req.get('Host'), req.url].join(''));
+  }
+  next();
+});
 
 const httpOptions = {
   cert: fs.readFileSync(path.join(__dirname, 'ssl', 'cert.pem')),
@@ -17,10 +24,6 @@ const httpOptions = {
 https.createServer(httpOptions, app).listen(port, () => {
   console.log(`Listening on port ${port}`);
 })
-
-// app.listen(port, "10.0.0.169" || "localhost" ,() => {
-//     console.log(`Listening to requests on http://localhost:${port}`);
-//   });
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'));

@@ -153,7 +153,7 @@ window.onbeforeunload = function() {
     return "Data will be lost if you leave the page, are you sure?";
 };
 
-const URL = 'https://ec2-18-191-39-63.us-east-2.compute.amazonaws.com:3006/';
+const URL = 'https://samplesequencer.com/';
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 audioCtx.resume();
 let sampleRegion;
@@ -589,6 +589,7 @@ function addSampleToRoll() {
                 playSampleInRoll(label);
             })
             label.innerHTML = document.getElementById('sampleName').value ? document.getElementById('sampleName').value : (samples.length + 1).toString();
+            currentValue.id = 'labelColumn';
             currentValue.appendChild(label);
         }
         else if(index == seqColumns.length - 2) {
