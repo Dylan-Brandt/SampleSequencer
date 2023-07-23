@@ -755,9 +755,9 @@ function deleteSample(button) {
     };
     seqColumns.forEach((element) => {
         button = element.childNodes[row];
-        // if(button.getAttribute('active') != null) {
-        //     button.click();
-        // }
+        if(button.getAttribute('active') != null) {
+            patternNoteCounts[row - 1]--;
+        }
         element.childNodes[row].remove();
     });
     samples.splice(row - 1, 1);

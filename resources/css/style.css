@@ -166,7 +166,7 @@ div#effectsControl {
     justify-content: center;
     align-items: center;
     position: absolute;
-    top: 20%;
+    top: 5%;
     z-index: 1000;
     background-color: dimgray;
     border: 1px solid black;
@@ -492,7 +492,12 @@ input[type="text"] {
         font-size: 0.75em;
     }
 
-    button#addSampleButton, button#openLoadSampleMenuButton {
+    select.selectMenu {
+        width: 200px;
+        font-size: 1em;
+    }
+
+    button#addSampleButton, button#openLoadSampleMenuButton, button.menuButton {
         height: 35px;
         width: 60px;
         font-size: 0.75em;
