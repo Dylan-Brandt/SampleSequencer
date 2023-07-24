@@ -56,7 +56,7 @@ const httpOptions = {
     key: fs.readFileSync(path.join(__dirname, 'certs', 'samplesequencer.key'))
 };
 
-https.createServer(httpOptions, app).listen(port, () => {
+https.createServer(httpOptions, app).listen(443, () => {
     logger.info('Listening on port 443');
 })
 

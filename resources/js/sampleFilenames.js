@@ -1,4 +1,4 @@
-const sampleFiles = {
+export const sampleFiles = {
     "bass": ["kurzweil-kit-08-bass", "roland-tr-808-bass"],
     "clap": ["electro-kit-05-clap", "kurzweil-kit-08-clap", "roland-tr-808-clap"],
     "crash": ["kurzweil-kit-01-crash", "kurzweil-kit-08-crash"],
@@ -11,5 +11,14 @@ const sampleFiles = {
     "tom-high": ["kurzweil-kit-01-tom-high", "kurzweil-kit-08-tom-high", "roland-tr-808-tom-high"],
     "tom-low": ["kurzweil-kit-01-tom-low", "kurzweil-kit-08-tom-low", "roland-tr-808-tom-low"]
 };
+
+export const kits = {
+    "acoustic-close": ["acoustic-close-kick", "acoustic-close-snare", "acoustic-close-hat-closed", "acoustic-close-hat-open"],
+    "electro-kit-05": ["electro-kit-05-kick", "electro-kit-05-clap", "electro-kit-05-hat-closed", "electro-kit-05-hat-open", "electro-kit-05-snare"],
+    "kurzweil-kit-01": ["kurzweil-kit-01-kick", "kurzweil-kit-01-snare", "kurzweil-kit-01-hat-closed", "kurzweil-kit-01-hat-open", "kurzweil-kit-01-ride", "kurzweil-kit-01-crash", "kurzweil-kit-01-tom-high", "kurzweil-kit-01-tom-low"],
+    "kurzweil-kit-08": ["kurzweil-kit-08-kick", "kurzweil-kit-08-bass", "kurzweil-kit-08-clap", "kurzweil-kit-08-snare", "kurzweil-kit-08-hat-closed", "kurzweil-kit-08-hat-open", "kurzweil-kit-08-tom-high", "kurzweil-kit-08-tom-low"],
+    "roland-tr-808": ["roland-tr-808-kick", "roland-tr-808-bass", "roland-tr-808-clap", "roland-tr-808-snare", "roland-tr-808-hat-closed", "roland-tr-808-hat-open", "roland-tr-808-tom-high", "roland-tr-808-tom-low"]
+}
+
 export default sampleFiles;
 

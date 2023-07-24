@@ -3,7 +3,7 @@ import RegionsPlugin from 'https://unpkg.com/wavesurfer.js@7.0.0-beta.11/dist/pl
 import audiobufferToWav from 'https://cdn.jsdelivr.net/npm/audiobuffer-to-wav@1.0.0/+esm';
 import * as Tone from 'https://cdn.jsdelivr.net/npm/tone@14.7.77/+esm';
 
-import sampleFiles from './sampleFilenames.js';
+import {sampleFiles, kits} from './sampleFilenames.js';
 
 // Select the necessary elements
 window.onload = () => {
@@ -38,6 +38,8 @@ window.onload = () => {
     const reverbPreDelay = document.getElementById('reverbPreDelay');
     const reverbAmount = document.getElementById('reverbAmount');
 
+    const openLoadKitMenuButton = document.getElementById('openLoadKitMenuButton');
+    const loadKitButton = document.getElementById('loadKitButton');
     const selectTrackEffect = document.getElementById('selectTrackEffect');
     const closeTrackEffectButtons = document.getElementsByClassName('closeTrackEffect');
     const trackThreshold = document.getElementById('trackThreshold');
@@ -75,8 +77,10 @@ window.onload = () => {
     stopSampleButton.addEventListener('click', stopSamplePlay);
     playSampleButton.addEventListener('click', playSample);
     downloadSampleButton.addEventListener('click', downloadRegion);
-    addSampleButton.addEventListener('click', addSampleToRoll);
-
+    addSampleButton.addEventListener('click', () => {
+        addSampleToRoll();
+    });
+    
     playTrackButton.addEventListener('click', playTrack);
     stopTrackButton.addEventListener('click', stopTrack);
 
@@ -84,8 +88,6 @@ window.onload = () => {
     Array.from(closeSampleEffectButtons).forEach((element) => {
         element.addEventListener('click', closeSampleEffectControl)
     })
-    trackBPM.addEventListener('change', updateBPM);
-    downloadTrackButton.addEventListener('click', downloadTrack);
     sampleGain.addEventListener('change', updateEffects);
     sampleGain.addEventListener('change', setGainVal);
     sampleThreshold.addEventListener('change', updateEffects);
@@ -107,6 +109,10 @@ window.onload = () => {
     reverbAmount.addEventListener('change', updateEffects);
     reverbAmount.addEventListener('change', setReverbAmountVal);
 
+    openLoadKitMenuButton.addEventListener('click', openLoadKitMenu);
+    loadKitButton.addEventListener('click', loadKit);
+    trackBPM.addEventListener('change', updateBPM);
+    downloadTrackButton.addEventListener('click', downloadTrack);
     selectTrackEffect.addEventListener('change', openTrackEffectControl);
     Array.from(closeTrackEffectButtons).forEach((element) => {
         element.addEventListener('click', closeTrackEffectControl)
@@ -570,7 +576,7 @@ function getEmptyPattern() {
 }
 
 // Add trimmed audio clip to sequencer roll
-function addSampleToRoll() {
+function addSampleToRoll(sampleURL = null, sampleName = null) {
     seqColumns = document.querySelectorAll('div.seq-column');
     playTrackButton.disabled = false;
     downloadTrackButton.disabled = false;
@@ -587,8 +593,9 @@ function addSampleToRoll() {
             label.className = 'sampleLabel';
             label.addEventListener('click', () => {
                 playSampleInRoll(label);
-            })
-            label.innerHTML = document.getElementById('sampleName').value ? document.getElementById('sampleName').value : (samples.length + 1).toString();
+            });
+            // label.innerHTML = document.getElementById('sampleName').value ? document.getElementById('sampleName').value : (samples.length + 1).toString();
+            label.innerHTML = sampleName ? sampleName : document.getElementById('sampleName').value ? document.getElementById('sampleName').value : (samples.length + 1).toString();
             currentValue.id = 'labelColumn';
             currentValue.appendChild(label);
         }
@@ -632,7 +639,13 @@ function addSampleToRoll() {
         }
     });
 
-    let url = getRegionURL();
+    let url;
+    if(sampleURL === null) {
+        url = getRegionURL();
+    }
+    else {
+        url = sampleURL;
+    }
     let player = new Tone.Player(url).toDestination();
     samples.push(player);
     sampleBuffers.push(new Tone.ToneAudioBuffer(url));
@@ -741,7 +754,12 @@ function stopTrack() {
 
 // Update transport BPM when value changes
 function updateBPM() {
-    Tone.Transport.bpm.value = trackBPM.value;
+    if(isNaN(trackBPM.value)) {
+        alert("BPM must be a number");
+        trackBPM.value = 120;
+    }
+    Tone.Transport.bpm.value = trackBPM.value ? trackBPM.value : 120;
+    trackBPM.value = trackBPM.value ? trackBPM.value : 120
 }
 
 // Remove a sample and its row from the sequencer
@@ -809,6 +827,9 @@ function downloadTrack() {
         else {
             break;
         }
+    }
+    if(numActiveBeats === 0) {
+        return;
     }
     // Offline audio context renderings
     Tone.Offline(({ transport }) => {
@@ -1011,4 +1032,25 @@ function enablePatternButtons() {
     document.getElementById('pattern1Button').removeAttribute('disabled', '');
     document.getElementById('pattern2Button').removeAttribute('disabled', '');
     document.getElementById('pattern3Button').removeAttribute('disabled', '');
+}
+
+function openLoadKitMenu() {
+    document.getElementById('loadKitMenuContainer').style.display = 'flex';
+    selectKit.value = 'placeholder';
+}
+
+// Load a kit from server and add samples to the sequencer
+async function loadKit() {
+    let kit = document.getElementById('selectKit').value;
+    let wavFile;
+    let blob;
+    let url;
+    for(let i = 0; i < kits[kit].length; i++) {
+        let hit = kits[kit][i].replace(kit, '').replace('-', '').replace('.wav');
+        wavFile = await fetch(URL + 'audio/' + hit + '/' + kits[kit][i] + '.wav');
+        blob = await wavFile.blob();
+        url = window.URL.createObjectURL(blob);
+        addSampleToRoll(url, hit);
+        window.URL.revokeObjectURL(url);
+    };
 }

@@ -78,13 +78,17 @@ select.selectMenu {
 
 label {
     font-family: var(--font);
-    font-size: 1.2em;
+    font-size: 1.1em;
+    user-select: none;
+}
+
+input {
     user-select: none;
 }
 
 input#trackBPM {
     height: 36px;
-    width: 50px;
+    width: 30px;
     margin: 2px;
     text-align: center;
     font-family: var(--font);
@@ -114,12 +118,12 @@ img.controlIcon {
     width: 28px;
 }
 
-.controlButton:hover, button#addSampleButton:hover, .deleteSample:hover, .muteSample:hover, #openLoadSampleMenuButton:hover, .menuButton:hover {
+.controlButton:hover, button#addSampleButton:hover, .deleteSample:hover, .muteSample:hover, #openLoadSampleMenuButton:hover, .menuButton:hover, #openLoadKitMenuButton:hover {
     cursor: pointer;
     background-color: gray;
 }
 
-button#addSampleButton, button#openLoadSampleMenuButton, .menuButton {
+button#addSampleButton, button#openLoadSampleMenuButton, .menuButton, button#openLoadKitMenuButton {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -136,8 +140,8 @@ button#addSampleButton, button#openLoadSampleMenuButton, .menuButton {
     user-select: none;
 }
 
-button#openLoadSampleMenuButton, .menuButton {
-    width: 60px;
+button#openLoadSampleMenuButton, .menuButton, button#openLoadKitMenuButton {
+    width: 80px;
 }
 
 div#effectsControl {
@@ -160,7 +164,7 @@ div#effectsControl {
     margin: 0 20px;
 }
 
-#sampleGainControl, #sampleCompressionControl, #sampleDistortionControl, #sampleDelayControl, #sampleReverbControl, #loadSampleMenuContainer {
+#sampleGainControl, #sampleCompressionControl, #sampleDistortionControl, #sampleDelayControl, #sampleReverbControl, #loadSampleMenuContainer, #loadKitMenuContainer {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -173,7 +177,7 @@ div#effectsControl {
     border-radius: 10px;
 }
 
-#loadSampleMenuContainer {
+#loadSampleMenuContainer, #loadKitMenuContainer {
     padding: 0 1% 1%;
 }
 
@@ -325,7 +329,7 @@ span.sampleLabel {
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    height: 25px;
+    height: 29px;
     width: 300px;
     text-align: center;
     font-family: var(--font);
@@ -394,7 +398,7 @@ input[type="text"] {
     }
 
     div.seq-column span.sampleLabel {
-        height: 28px;
+        height: 29px;
     }
 
     span.beatLabel {
@@ -409,9 +413,9 @@ input[type="text"] {
 }
 
 @media (max-width: 800px) {
-    div.seq-column span.sampleLabel {
+    /* div.seq-column span.sampleLabel {
         width: 75px;
-    }
+    } */
 
     span.beatLabel {
         height: 19px;
@@ -421,9 +425,9 @@ input[type="text"] {
 }
 
 @media (max-width: 725px) {
-    div.seq-column span.sampleLabel {
+    /* div.seq-column span.sampleLabel {
         width: 28px;
-    }
+    } */
 
     div.seq-column span {
         width: 28px;
@@ -437,9 +441,9 @@ input[type="text"] {
 }
 
 @media (max-width: 500px) {
-    div.seq-column#labelColumn {
+    /* div.seq-column#labelColumn {
         display: none;
-    }
+    } */
 
     div#samplerContainer, div#playerContainer {
         width: 100%;
@@ -449,10 +453,9 @@ input[type="text"] {
         width: 10%;
     }
 
-    button.seq-note, .muteSample img.controlIcon, .deleteSample img.controlIcon {
-        border: 1px solid black;
-        height: 18px;
-        width: 18px;
+    button.seq-note, img.controlIcon, img.controlIcon {
+        height: 16px;
+        width: 16px;
         margin: 0.5px;
         border-radius: 3px;
     }
@@ -462,14 +465,21 @@ input[type="text"] {
     }
 
     div.seq-column span {
-        display: none;
+        height: 17px;
         margin: 1px 1px 1px 2px;
     }
 
+    div.seq-column span.sampleLabel {
+        height: 15px;
+        width: 50px;
+        font-size: 0.65em;
+    }
+
     button.muteSample, button.deleteSample {
-        width: 17px;
-        height: 17px;
-        margin: 1px 2px 1px 1px;
+        width: 16px;
+        height: 16px;
+        margin: 0.5px;
+        border-radius: 3px;
     }
 
     .controlButton {
@@ -497,7 +507,7 @@ input[type="text"] {
         font-size: 1em;
     }
 
-    button#addSampleButton, button#openLoadSampleMenuButton, button.menuButton {
+    button#addSampleButton, button#openLoadSampleMenuButton, button.menuButton, button#openLoadKitMenuButton, button#openLoadKitMenuButton {
         height: 35px;
         width: 60px;
         font-size: 0.75em;

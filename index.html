@@ -17,13 +17,13 @@
         <h2>Sampler</h1>
         <div id="samplerContainer">
             <div class="controls">
-                <button id="openLoadSampleMenuButton"><span>Load</span></button>
+                <button id="openLoadSampleMenuButton"><span>Load Sample</span></button>
                 <div id="loadSampleMenuContainer" class="loadMenuContainer" style="display: none;">
                     <div class="closeMenuButtonContainer"><button class="closeMenuButton"><img src="/images/icons8-close-16.png"></button></div>
                     <span class="effectsLabel">Load Sample</span>
                     <div class="loadMenuWrapper">
                         <select name="selectSampleHit" class="selectMenu" id="selectSampleHit">
-                            <option value="placeholder" disabled selected>Hit</option>
+                            <option value="placeholder" disabled selected>Drum Hit</option>
                             <option value="bass">Bass</option>
                             <option value="kick">Kick</option>
                             <option value="clap">Clap</option>
@@ -152,8 +152,22 @@
         <div id="playerContainer">
             <div class="controls">
                 <input id="trackTitle" placeholder="Track Title" type="text">
-                <label for="trackBPM">BPM</label>
-                <input id="trackBPM" name="trackBPM" value="120" type="text">
+                <button id="openLoadKitMenuButton"><span>Load Kit</span></button>
+                <div id="loadKitMenuContainer" class="loadMenuContainer" style="display: none;">
+                    <div class="closeMenuButtonContainer"><button class="closeMenuButton"><img src="/images/icons8-close-16.png"></button></div>
+                    <span class="effectsLabel">Load Kit</span>
+                    <div class="loadMenuWrapper">
+                        <select name="selectKit" class="selectMenu" id="selectKit">
+                            <option value="placeholder" disabled selected>Drum Kit</option>
+                            <option value="acoustic-close">acoustic-close</option>
+                            <option value="electro-kit-05">electro-kit-05</option>
+                            <option value="kurzweil-kit-01">kurzweil-kit-01</option>
+                            <option value="kurzweil-kit-08">kurzweil-kit-08</option>
+                            <option value="roland-tr-808">roland-tr-808</option>
+                        </select>
+                        <button id="loadKitButton" class="menuButton"><span>Load Kit</span></button>
+                    </div>
+                </div>
                 <button id="playTrackButton" class="controlButton" disabled>
                     <img src="/images/icons8-play-button-30.png" class="controlIcon">
                 </button>
@@ -182,8 +196,8 @@
                 <div class="seq-column"><div class="beatLabel"></div></div>
                 <div class="seq-column"><div class="beatLabel"></div></div>
                 <div class="seq-column"><div class="beatLabel"></div></div>
-                <div class="seq-column"><div class="beatLabel"></div></div>
-                <div class="seq-column"><div class="beatLabel"></div></div>
+                <div class="seq-column" id="muteColumn"><div class="beatLabel"></div></div>
+                <div class="seq-column" id="deleteColumn"><div class="beatLabel"></div></div>
             </div>
             <div class="controls bottomControls">
                 <div id="trackCompressionControl" style="display: none">
@@ -301,6 +315,8 @@
                     <option value="trackVibrato">Vibrato</option>
                     <option value="trackReverb">Reverb</option>
                 </select>
+                <label for="trackBPM">BPM</label>
+                <input id="trackBPM" name="trackBPM" value="120" type="text">
                 <button class="controlButton patternButton" id="pattern0Button" style="background-color: gray;">1</button>
                 <button class="controlButton patternButton" id="pattern1Button">2</button>
                 <button class="controlButton patternButton" id="pattern2Button">3</button>
