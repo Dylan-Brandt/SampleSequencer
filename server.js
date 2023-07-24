@@ -7,7 +7,6 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const port = 443;
 
 const { combine, timestamp, printf, align } = winston.format;
 
@@ -17,11 +16,17 @@ const fileRotateTransport = new winston.transports.DailyRotateFile({
     maxFiles: '30d',
   });
 
+const timezoned = () => {
+    return new Date().toLocaleString('en-US', {
+        timeZone: 'America/Chicago'
+    });
+}
+
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
     format: combine(
         timestamp({
-          format: 'YYYY-MM-DD hh:mm:ss A',
+          format: timezoned,
         }),
         align(),
         printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`)
@@ -33,10 +38,10 @@ app.use(function (req, res, next) {
     let filename = path.basename(req.url);
     let extension = path.extname(filename);
     if(extension === '.wav') {
-        logger.info('Served ' + filename);
+        logger.info('Served ' + filename + ' to ' + req.ip);
     }
-    if(!(extension === '.ico' || extension === '.css' || extension === '.js' || extension === '.png' || extension === '')) {
-        logger.warn('Unexpected request for ' + filename);
+    else if(!(extension === '.ico' || extension === '.css' || extension === '.js' || extension === '.png' || extension === '')) {
+        logger.warn('Unexpected request for ' + filename + ' from ' + req.ip);
     }
     next();
 });
@@ -52,13 +57,13 @@ const httpOptions = {
 };
 
 https.createServer(httpOptions, app).listen(port, () => {
-    logger.info(`Listening on port ${port}`);
+    logger.info('Listening on port 443');
 })
 
 http.createServer((req, res) => {
     res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
     res.end();
-    logger.info('Redirect to https');
+    logger.info('Redirect ' + req.socket.remoteAddress);
 }).listen(80);
 
 app.get('/', (req, res) => {
