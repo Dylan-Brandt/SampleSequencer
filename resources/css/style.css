@@ -11,9 +11,13 @@ body {
     align-items: center;
 }
 
-h2 {
+h1, h2, h3 {
     font-family: var(--font);
     user-select: none;
+}
+
+ol {
+    font-family: var(--font);
 }
 
 div#samplerContainer {
@@ -84,6 +88,10 @@ label {
 
 input {
     user-select: none;
+}
+
+button, select, label {
+    font-weight: bold;
 }
 
 input#trackBPM {

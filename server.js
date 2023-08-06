@@ -13,7 +13,7 @@ const { combine, timestamp, printf, align } = winston.format;
 const fileRotateTransport = new winston.transports.DailyRotateFile({
     filename: './logs/server-%DATE%.log',
     datePattern: 'YYYY-MM-DD',
-    maxFiles: '30d',
+    maxFiles: '14d',
   });
 
 const timezoned = () => {
@@ -58,7 +58,7 @@ const httpOptions = {
 
 https.createServer(httpOptions, app).listen(443, () => {
     logger.info('Listening on port 443');
-})
+});
 
 http.createServer((req, res) => {
     res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
@@ -69,4 +69,9 @@ http.createServer((req, res) => {
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'));
     logger.info('Connection from ' + req.ip);
+});
+
+app.get('/howto', (req, res) => {
+    res.sendFile(path.join(__dirname, '/howto.html'));
+    logger.info('Served howto.html to ' + req.ip);
 });
