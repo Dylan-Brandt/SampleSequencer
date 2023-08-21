@@ -67,9 +67,13 @@ http.createServer((req, res) => {
 }).listen(80);
 
 app.get('/', (req, res) => {
+    res.redirect('app');
+});
+
+app.get('/app', (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'));
     logger.info('Connection from ' + req.ip);
-});
+})
 
 app.get('/howto', (req, res) => {
     res.sendFile(path.join(__dirname, '/howto.html'));

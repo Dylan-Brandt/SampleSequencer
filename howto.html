@@ -26,13 +26,33 @@
             }
 
             li {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
                 margin-bottom: 5%;
             }
+
+            img {
+                width: 70%;
+            }
+
+            @media (max-width: 600px) {
+                img {
+                    width: 85%;
+                }
+            }
+            
+
+            @media (max-width: 600px) {
+                img {
+                    width: 100%;
+                }
+            }
         </style>
-        <h1 style="font-size: 2em;">Sample Sequencer</h1>
-        <button class="controlButton" style="width: 150px" onclick="window.location.href = 'https://samplesequencer.com/';">
+        <button class="controlButton" style="width: 150px; margin-left: auto;" onclick="window.location.href = 'https://samplesequencer.com/';">
             Use the app
         </button>
+        <h1 style="font-size: 2em;">Sample Sequencer</h1>
         <h3>An application for creating unique drum patterns using loaded samples and/or recorded sounds</h3>
         <ol style="padding: 0;">
             <li>
