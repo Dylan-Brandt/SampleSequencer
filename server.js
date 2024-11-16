@@ -51,20 +51,20 @@ app.use(express.urlencoded());
 
 app.set('trust proxy', true);
 
-const httpOptions = {
-    cert: fs.readFileSync(path.join(__dirname, 'certs', 'samplesequencer.pem')),
-    key: fs.readFileSync(path.join(__dirname, 'certs', 'samplesequencer.key'))
-};
+// const httpOptions = {
+//     cert: fs.readFileSync(path.join(__dirname, 'certs', 'samplesequencer.pem')),
+//     key: fs.readFileSync(path.join(__dirname, 'certs', 'samplesequencer.key'))
+// };
 
-https.createServer(httpOptions, app).listen(443, () => {
-    logger.info('Listening on port 443');
-});
+// https.createServer(httpOptions, app).listen(443, () => {
+//     logger.info('Listening on port 443');
+// });
 
-http.createServer((req, res) => {
-    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-    res.end();
-    logger.info('Redirect ' + req.socket.remoteAddress);
-}).listen(80);
+// http.createServer((req, res) => {
+//     res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+//     res.end();
+//     logger.info('Redirect ' + req.socket.remoteAddress);
+// }).listen(80);
 
 app.get('/', (req, res) => {
     res.redirect('app');
@@ -79,3 +79,8 @@ app.get('/howto', (req, res) => {
     res.sendFile(path.join(__dirname, '/howto.html'));
     logger.info('Served howto.html to ' + req.ip);
 });
+
+app.listen(80, function(err){
+    if (err) console.log(err);
+    console.log("Server listening on PORT", 80);
+ });
