@@ -1,16 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>How to use</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="keywords" content="drum machine, drum sampler, online drum machine, online drum sequencer, sample sequencer, record samples, audio effects, audio recorder, 
-        online digital audio workstation, beat maker online, online music maker, music tool, online sample recorder, make music online,
-        make beats online, online daw, sample creator, beat creator, music maker online, drum online, drum sequencer, drum sampler online, drum patterns,
-        drum patterns online, make drum patterns, how to, make drum patterns online">
-        <meta name="description" content="Online tool to create drum patterns. Record, upload, or import sounds from a library and use them to craft a drum pattern in the sequencer. Add effects to your track and download it to listen later.">
+        <title>How to Make Beats Online &mdash; Sample Sequencer Tutorial</title>
+        <meta name="description" content="Step-by-step tutorial for Sample Sequencer: load or record drum samples, trim and add effects, sequence patterns in the browser, and download your beat as a .wav file.">
+        <link rel="canonical" href="https://samplesequencer.com/howto">
+
+        <meta property="og:type" content="article">
+        <meta property="og:site_name" content="Sample Sequencer">
+        <meta property="og:title" content="How to Make Beats Online &mdash; Sample Sequencer Tutorial">
+        <meta property="og:description" content="Step-by-step tutorial: load or record drum samples, trim and add effects, sequence patterns, and download as .wav.">
+        <meta property="og:url" content="https://samplesequencer.com/howto">
+        <meta property="og:image" content="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/152a4ec7-a316-4deb-8701-23c60744397b">
+
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="How to Make Beats Online &mdash; Sample Sequencer Tutorial">
+        <meta name="twitter:description" content="Step-by-step tutorial for Sample Sequencer.">
+        <meta name="twitter:image" content="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/152a4ec7-a316-4deb-8701-23c60744397b">
+
         <link rel="stylesheet" href="css/style.css">
-	    <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "HowTo",
+            "name": "How to make a beat with Sample Sequencer",
+            "description": "Load, record, or upload drum samples, add effects, sequence patterns in the browser, and download your beat as a .wav file.",
+            "totalTime": "PT10M",
+            "tool": [
+                {"@type": "HowToTool", "name": "Sample Sequencer (web app)"}
+            ],
+            "step": [
+                {
+                    "@type": "HowToStep",
+                    "name": "Load or capture a sound",
+                    "text": "In the sampler controls, pick a drum hit from the library, upload an audio file from your computer, or record a sound through your microphone."
+                },
+                {
+                    "@type": "HowToStep",
+                    "name": "Trim the clip",
+                    "text": "Click and drag over the waveform to select the portion you want. Click the selection to preview the trimmed clip."
+                },
+                {
+                    "@type": "HowToStep",
+                    "name": "Add sample effects",
+                    "text": "Apply gain, compression, distortion, delay, or reverb to shape the sound of the individual sample."
+                },
+                {
+                    "@type": "HowToStep",
+                    "name": "Send to the sequencer",
+                    "text": "Click the Sequence button to add the sample to the sequencer. Repeat for as many samples as you want in the beat."
+                },
+                {
+                    "@type": "HowToStep",
+                    "name": "Or load a full kit",
+                    "text": "For faster beat-making, load an entire drum kit from the library in one click."
+                },
+                {
+                    "@type": "HowToStep",
+                    "name": "Program the patterns",
+                    "text": "Place notes across the four 16-step patterns. Patterns that contain notes play back in order on loop."
+                },
+                {
+                    "@type": "HowToStep",
+                    "name": "Add track effects",
+                    "text": "Apply chorus, phaser, vibrato, reverb, gain, or compression to the full track."
+                },
+                {
+                    "@type": "HowToStep",
+                    "name": "Download your beat",
+                    "text": "When the track sounds right, download it as a .wav file to use in any DAW or share."
+                }
+            ]
+        }
+        </script>
     </head>
     <body>
         <style>
@@ -49,45 +114,54 @@
                 }
             }
         </style>
-        <button class="controlButton" style="width: 150px; margin-left: auto;" onclick="window.location.href = 'https://samplesequencer.com/';">
-            Use the app
-        </button>
-        <h1 style="font-size: 2em;">Sample Sequencer</h1>
-        <h3>An application for creating unique drum patterns using loaded samples and/or recorded sounds</h3>
-        <ol style="padding: 0;">
-            <li>
-                <span>In the top controls of the sampler, select a drum hit from the library, upload a sound from your computer, or record a new sound using a microphone.</span>
-                <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/152a4ec7-a316-4deb-8701-23c60744397b" width="100%">
-            </li>
-            <li>
-                <span>Optionally trim the audio clip by clicking and dragging over the sound wave. Click the selection to play the trimmed clip.</span>
-                <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/c23c00d5-4973-4cf3-8e57-e6be6ba952ee" width="100%">
-            </li>
-            <li>
-                <span>Add some effects to the clip.</span>
-                <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/11d3ba98-c551-4c0b-9657-87d0161873bf" width="100%">
-            </li>
-            <li>
-                <span>To schedule the sample for playback, send the sample to the sequencer by clicking the 'Sequence' button. Sequence as many samples as you like.</span>
-                <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/a52cdf13-26c5-43ca-b41d-cfd1538102df" width="100%">
-            </li>
-            <li>
-                <span>For quick creation of drum beats, load an entire kit from the library.</span>
-                <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/77b50e12-a322-4afe-b791-add29f3afa0a" width="100%">
-            </li>
-            <li>
-                <span>There are four patterns in the sequencer. When there are notes in the patterns they will play in order</span>
-                <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/94795541-6012-45b7-8c17-ca0452ba29cf" width="100%">
-                <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/cdfbb99b-6cf2-4d33-acdb-14a25dcd3f23" width="100%">
-            </li>
-            <li>
-                <span>Add some effects such as reverb, chorus, or vibrato to the track much like in the sampler</span>
-                <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/11c3826b-c509-44de-b575-825fcdd59837" width="100%">
-            </li>
-            <li>
-                <span>Download the track as a .wav file to save for later or to loop in your digital audio workstation (DAW)</span>
-                <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/0e79483a-0bc2-47f8-8cda-953a2eea7bd2" width="100%">
-            </li>
-        </ol>
+        <header>
+            <nav aria-label="Primary">
+                <button class="controlButton" style="width: 150px; margin-left: auto;" onclick="window.location.href = 'https://samplesequencer.com/';">
+                    Use the app
+                </button>
+            </nav>
+        </header>
+        <main>
+            <h1 style="font-size: 2em;">How to Use Sample Sequencer</h1>
+            <p style="text-align: center; max-width: 700px;">A step-by-step guide to making drum patterns with Sample Sequencer &mdash; a free online drum machine that runs in your browser.</p>
+            <ol style="padding: 0;">
+                <li>
+                    <span>In the top controls of the sampler, select a drum hit from the library, upload a sound from your computer, or record a new sound using a microphone.</span>
+                    <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/152a4ec7-a316-4deb-8701-23c60744397b" width="100%" alt="Sample Sequencer sampler controls showing load, upload, and record buttons">
+                </li>
+                <li>
+                    <span>Optionally trim the audio clip by clicking and dragging over the sound wave. Click the selection to play the trimmed clip.</span>
+                    <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/c23c00d5-4973-4cf3-8e57-e6be6ba952ee" width="100%" alt="Audio waveform with a region selected for trimming">
+                </li>
+                <li>
+                    <span>Add some effects to the clip.</span>
+                    <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/11d3ba98-c551-4c0b-9657-87d0161873bf" width="100%" alt="Sample-level audio effects panel showing reverb, delay, distortion, compression, and gain controls">
+                </li>
+                <li>
+                    <span>To schedule the sample for playback, send the sample to the sequencer by clicking the 'Sequence' button. Sequence as many samples as you like.</span>
+                    <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/a52cdf13-26c5-43ca-b41d-cfd1538102df" width="100%" alt="Sequencer grid with a sample loaded into a 16-step row">
+                </li>
+                <li>
+                    <span>For quick creation of drum beats, load an entire kit from the library.</span>
+                    <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/77b50e12-a322-4afe-b791-add29f3afa0a" width="100%" alt="Sequencer with a full drum kit loaded across multiple sample rows">
+                </li>
+                <li>
+                    <span>There are four patterns in the sequencer. When there are notes in the patterns they will play in order.</span>
+                    <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/94795541-6012-45b7-8c17-ca0452ba29cf" width="100%" alt="Pattern selector buttons numbered 1 through 4">
+                    <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/cdfbb99b-6cf2-4d33-acdb-14a25dcd3f23" width="100%" alt="Sequencer playing through four patterns in order">
+                </li>
+                <li>
+                    <span>Add some effects such as reverb, chorus, or vibrato to the track much like in the sampler.</span>
+                    <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/11c3826b-c509-44de-b575-825fcdd59837" width="100%" alt="Track-level effects panel showing chorus, phaser, vibrato, and reverb controls">
+                </li>
+                <li>
+                    <span>Download the track as a .wav file to save for later or to loop in your digital audio workstation (DAW).</span>
+                    <img src="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/0e79483a-0bc2-47f8-8cda-953a2eea7bd2" width="100%" alt="Track title input and download button used to export the finished beat as a .wav file">
+                </li>
+            </ol>
+        </main>
+        <footer class="siteFooter">
+            <p>&copy; Sample Sequencer &middot; <a href="/">Open the app</a></p>
+        </footer>
     </body>
 </html>

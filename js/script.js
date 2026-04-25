@@ -159,7 +159,7 @@ window.onbeforeunload = function() {
     return "Data will be lost if you leave the page, are you sure?";
 };
 
-const URL = 'https://samplesequencer.com/';
+const URL = '/';
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 audioCtx.resume();
 let sampleRegion;

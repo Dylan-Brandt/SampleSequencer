@@ -1,30 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Sample Sequencer</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="keywords" content="drum machine, drum sampler, online drum machine, online drum sequencer, sample sequencer, record samples, audio effects, audio recorder, 
-        online digital audio workstation, beat maker online, online music maker, music tool, online sample recorder, make music online,
-        make beats online, online daw, sample creator, beat creator, music maker online, drum online, drum sequencer, drum sampler online, drum patterns,
-        drum patterns online, make drum patterns, how to, make drum patterns online">
-        <meta name="description" content="Online tool to create drum patterns. Record, upload, or import sounds from a library and use them to craft a drum pattern in the sequencer. Add effects to your track and download it to listen later.">
+        <title>Sample Sequencer | Free Online Drum Machine &amp; Beat Maker</title>
+        <meta name="description" content="Free online drum machine and beat maker. Record, upload, or pick from a sample library, add effects like reverb and delay, and sequence beats in your browser. No signup, no download.">
+        <link rel="canonical" href="https://samplesequencer.com/">
+
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="Sample Sequencer">
+        <meta property="og:title" content="Sample Sequencer | Free Online Drum Machine &amp; Beat Maker">
+        <meta property="og:description" content="Free online drum machine and beat maker. Record samples, add effects, and sequence beats in your browser. No signup, no download.">
+        <meta property="og:url" content="https://samplesequencer.com/">
+        <meta property="og:image" content="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/77b50e12-a322-4afe-b791-da30c20b443f">
+
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Sample Sequencer | Free Online Drum Machine &amp; Beat Maker">
+        <meta name="twitter:description" content="Free online drum machine and beat maker. Record samples, add effects, and sequence beats in your browser.">
+        <meta name="twitter:image" content="https://github.com/Dylan-Brandt/SampleSequencer/assets/97772869/77b50e12-a322-4afe-b791-da30c20b443f">
+
         <link rel="stylesheet" href="css/style.css">
-	    <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
         <script src="js/script.js" type="module"></script>
+
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "Sample Sequencer",
+            "url": "https://samplesequencer.com/",
+            "description": "Free online drum machine and beat maker. Record, upload, or pick from a sample library, add effects, and sequence beats in your browser.",
+            "applicationCategory": "MultimediaApplication",
+            "applicationSubCategory": "Drum Machine",
+            "operatingSystem": "Any (browser-based)",
+            "browserRequirements": "Requires a modern browser with Web Audio API support",
+            "featureList": [
+                "Browser-based drum sequencer",
+                "Built-in drum kit library",
+                "Record audio samples from microphone",
+                "Upload custom audio samples",
+                "Sample-level effects: gain, compression, distortion, delay, reverb",
+                "Track-level effects: gain, compression, chorus, phaser, vibrato, reverb",
+                "Four 16-step patterns",
+                "Download finished tracks as .wav"
+            ],
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            }
+        }
+        </script>
+
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "Is Sample Sequencer free?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. Sample Sequencer is completely free to use with no signup or account required."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Do I need to download or install anything?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "No. The app runs entirely in your browser. It works in Chrome, Firefox, Edge, and Safari."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Can I upload my own samples?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. Use the upload button in the sampler to load any audio file from your computer (such as .wav or .mp3) and sequence it like any other sample."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Can I record audio with my microphone?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. Click the record button in the sampler to capture audio from your microphone, then trim and add effects before sequencing it."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "What audio effects are included?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Each sample supports gain, compression, distortion, delay, and reverb. The full track adds chorus, phaser, and vibrato on top of gain, compression, and reverb."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Can I download my finished beat?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. Once your track is ready, click the download button to export it as a .wav file you can use in any DAW or share."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How many patterns can I sequence?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "The sequencer has four 16-step patterns. Patterns that contain notes are played back in order on loop."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Does it work on mobile?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "The interface is responsive, but the sequencer grid is best used on a desktop or tablet for comfortable note placement."
+                    }
+                }
+            ]
+        }
+        </script>
     </head>
     <body>
-        <div style="margin-left: auto; ">
-            <button class="controlButton" style="width: 150px; margin-left: auto;" onclick="window.location.href = 'https://samplesequencer.com/howto';">
-                How to use
-            </button>
-        </div>
-        <h2>Sampler</h1>
+        <h1 class="sr-only">Sample Sequencer — Free Online Drum Machine and Beat Maker</h1>
+        <header>
+            <nav aria-label="Primary">
+                <button class="controlButton" style="width: 150px; margin-left: auto;" onclick="window.location.href = 'https://samplesequencer.com/howto';">
+                    How to use
+                </button>
+            </nav>
+        </header>
+        <main>
+        <h2>Sampler</h2>
         <div id="samplerContainer">
             <div class="controls">
                 <button id="openLoadSampleMenuButton"><span>Load Sample</span></button>
                 <div id="loadSampleMenuContainer" class="loadMenuContainer" style="display: none;">
-                    <div class="closeMenuButtonContainer"><button class="closeMenuButton"><img src="/images/icons8-close-16.png"></button></div>
+                    <div class="closeMenuButtonContainer"><button class="closeMenuButton"><img src="/images/icons8-close-16.png" alt="Close"></button></div>
                     <span class="effectsLabel">Load Sample</span>
                     <div class="loadMenuWrapper">
                         <select name="selectSampleHit" class="selectMenu" id="selectSampleHit">
@@ -51,28 +167,28 @@
                     </div>
                 </div>
                 <button id="uploadSampleButton" class="controlButton">
-                    <img src="/images/icons8-upload-48.png" class="controlIcon">
+                    <img src="/images/icons8-upload-48.png" class="controlIcon" alt="Upload sample">
                 </button>
                 <button id="recordSampleButton" class="controlButton">
-                    <img src="/images/icons8-record-96.png" class="controlIcon">
+                    <img src="/images/icons8-record-96.png" class="controlIcon" alt="Record sample">
                 </button>
                 <button id="playSampleButton" class="controlButton" disabled>
-                    <img src="/images/icons8-play-button-30.png" class="controlIcon">
+                    <img src="/images/icons8-play-button-30.png" class="controlIcon" alt="Play">
                 </button>
                 <button id="stopSampleButton" class="controlButton" disabled>
-                    <img src="/images/icons8-stop-30.png" class="controlIcon">
+                    <img src="/images/icons8-stop-30.png" class="controlIcon" alt="Stop">
                 </button>
             </div>
             <div id="waveform"></div>
             <div class="controls bottomControls">
                 <div class="sliderContainer" id="sampleGainControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png" alt="Close"></button></div>
                     <label for="sampleGain">Gain</label>
                     <input type="range" id="sampleGain" name="sampleGain" min="-20" max="10" step="0.01">
                     <span id="sampleGainVal"></span>
                 </div>
                 <div id="sampleCompressionControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png" alt="Close"></button></div>
                     <span class="effectsLabel">Compressor</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -88,13 +204,13 @@
                     </div>
                 </div>
                 <div class="sliderContainer" id="sampleDistortionControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png" alt="Close"></button></div>
                     <label for="sampleDistortion">Distortion</label>
                     <input type="range" id="sampleDistortion" name="sampleDistortion" min="0" max="1" step="0.01" value="0">
                     <span id="sampleDistortionVal"></span>
                 </div>
                 <div id="sampleDelayControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png" alt="Close"></button></div>
                     <span class="effectsLabel">Delay</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -115,7 +231,7 @@
                     </div>
                 </div>
                 <div id="sampleReverbControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeSampleEffect"><img src="/images/icons8-close-16.png" alt="Close"></button></div>
                     <span class="effectsLabel">Reverb</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -144,7 +260,7 @@
                     <option value="sampleReverb">Reverb</option>
                 </select>
                 <button id="downloadSampleButton" class="controlButton" disabled>
-                    <img src="/images/icons8-downloading-updates-48.png" class="controlIcon">
+                    <img src="/images/icons8-downloading-updates-48.png" class="controlIcon" alt="Download">
                 </button>
                 <input id="sampleName" placeholder="Sample Name" type="text">
                 <button id="addSampleButton" disabled>
@@ -159,7 +275,7 @@
                 <input id="trackTitle" placeholder="Track Title" type="text">
                 <button id="openLoadKitMenuButton"><span>Load Kit</span></button>
                 <div id="loadKitMenuContainer" class="loadMenuContainer" style="display: none;">
-                    <div class="closeMenuButtonContainer"><button class="closeMenuButton"><img src="/images/icons8-close-16.png"></button></div>
+                    <div class="closeMenuButtonContainer"><button class="closeMenuButton"><img src="/images/icons8-close-16.png" alt="Close"></button></div>
                     <span class="effectsLabel">Load Kit</span>
                     <div class="loadMenuWrapper">
                         <select name="selectKit" class="selectMenu" id="selectKit">
@@ -174,13 +290,13 @@
                     </div>
                 </div>
                 <button id="playTrackButton" class="controlButton" disabled>
-                    <img src="/images/icons8-play-button-30.png" class="controlIcon">
+                    <img src="/images/icons8-play-button-30.png" class="controlIcon" alt="Play">
                 </button>
                 <button id="stopTrackButton" class="controlButton" disabled>
-                    <img src="/images/icons8-stop-30.png" class="controlIcon">
+                    <img src="/images/icons8-stop-30.png" class="controlIcon" alt="Stop">
                 </button>
                 <button id="downloadTrackButton" class="controlButton" disabled>
-                    <img src="/images/icons8-downloading-updates-48.png" class="controlIcon">
+                    <img src="/images/icons8-downloading-updates-48.png" class="controlIcon" alt="Download">
                 </button>
             </div>
             <div id="rollContainer">
@@ -206,7 +322,7 @@
             </div>
             <div class="controls bottomControls">
                 <div id="trackCompressionControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png" alt="Close"></button></div>
                     <span class="effectsLabel">Compressor</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -222,13 +338,13 @@
                     </div>
                 </div>
                 <div class="sliderContainer" id="trackGainControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png" alt="Close"></button></div>
                     <label for="trackGain">Gain</label>
                     <input type="range" id="trackGain" name="trackGain" min="-60" max="15" step="1" value="0">
                     <span id="trackGainVal"></span>
                 </div>
                 <div id="trackChorusControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png" alt="Close"></button></div>
                     <span class="effectsLabel">Chorus</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -254,7 +370,7 @@
                     </div>
                 </div>
                 <div id="trackPhaserControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png" alt="Close"></button></div>
                     <span class="effectsLabel">Phaser</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -270,7 +386,7 @@
                     </div>
                 </div>
                 <div id="trackVibratoControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png" alt="Close"></button></div>
                     <span class="effectsLabel">Vibrato</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -291,7 +407,7 @@
                     </div>
                 </div>
                 <div id="trackReverbControl" style="display: none">
-                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png"></button></div>
+                    <div class="closeEffectButtonContainer"><button class="closeTrackEffect"><img src="/images/icons8-close-16.png" alt="Close"></button></div>
                     <span class="effectsLabel">Reverb</span>
                     <div class="multiEffectContainer">
                         <div class="sliderContainer">
@@ -328,5 +444,52 @@
                 <button class="controlButton patternButton" id="pattern3Button">4</button>
             </div>
         </div>
+
+        <section class="infoSection" aria-labelledby="aboutHeading">
+            <h2 id="aboutHeading">About Sample Sequencer</h2>
+            <p>
+                Sample Sequencer is a free online drum machine and beat maker that runs entirely
+                in your browser &mdash; no downloads, no signup. Pick sounds from the built-in drum
+                kit library, upload your own audio files, or record new sounds with your microphone.
+                Trim each clip, add effects like reverb, delay, distortion, compression, chorus,
+                phaser, and vibrato, then arrange them across four 16-step patterns. When you are
+                happy with the beat, download it as a .wav file to use in any DAW or share with
+                others.
+            </p>
+        </section>
+
+        <section class="infoSection faqSection" aria-labelledby="faqHeading">
+            <h2 id="faqHeading">Frequently Asked Questions</h2>
+            <dl class="faqList">
+                <dt>Is Sample Sequencer free?</dt>
+                <dd>Yes. Sample Sequencer is completely free to use with no signup or account required.</dd>
+
+                <dt>Do I need to download or install anything?</dt>
+                <dd>No. The app runs entirely in your browser. It works in Chrome, Firefox, Edge, and Safari.</dd>
+
+                <dt>Can I upload my own samples?</dt>
+                <dd>Yes. Use the upload button in the sampler to load any audio file from your computer (such as .wav or .mp3) and sequence it like any other sample.</dd>
+
+                <dt>Can I record audio with my microphone?</dt>
+                <dd>Yes. Click the record button in the sampler to capture audio from your microphone, then trim and add effects before sequencing it.</dd>
+
+                <dt>What audio effects are included?</dt>
+                <dd>Each sample supports gain, compression, distortion, delay, and reverb. The full track adds chorus, phaser, and vibrato on top of gain, compression, and reverb.</dd>
+
+                <dt>Can I download my finished beat?</dt>
+                <dd>Yes. Once your track is ready, click the download button to export it as a .wav file you can use in any DAW or share.</dd>
+
+                <dt>How many patterns can I sequence?</dt>
+                <dd>The sequencer has four 16-step patterns. Patterns that contain notes are played back in order on loop.</dd>
+
+                <dt>Does it work on mobile?</dt>
+                <dd>The interface is responsive, but the sequencer grid is best used on a desktop or tablet for comfortable note placement.</dd>
+            </dl>
+        </section>
+        </main>
+
+        <footer class="siteFooter">
+            <p>&copy; Sample Sequencer &middot; <a href="/howto">How to use</a></p>
+        </footer>
     </body>
 </html>
